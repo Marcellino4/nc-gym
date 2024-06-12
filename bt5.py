@@ -3,6 +3,10 @@ import requests
 import serial
 import threading
 import datetime
+import logging
+
+# Konfigurasi logging
+logging.basicConfig(filename='logfilepy.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
 # Inisialisasi pemetaan key secara dinamis
 key_mappings = {}
@@ -16,13 +20,13 @@ for name in dir(ecodes):
 # Fungsi untuk menangani input dan logika untuk setiap keyboard
 def handle_keyboard(device_path, status, serial_port):
     keyboard = InputDevice(device_path)
-    print(f"Listening on {device_path} (device name: {keyboard.name})")
+    logging.info(f"Listening on {device_path} (device name: {keyboard.name})")
 
     try:
         while True:
             current_time = datetime.datetime.now()
             id_gabung = ''  # Inisialisasi ulang variabel untuk menyimpan kata
-            print(f"\nReady for new input on {device_path}. Press ENTER to submit.")
+            logging.info(f"\nReady for new input on {device_path}. Press ENTER to submit.")
 
             for event in keyboard.read_loop():
                 if event.type == ecodes.EV_KEY:
@@ -34,7 +38,7 @@ def handle_keyboard(device_path, status, serial_port):
                             if karakter == "ENTER":
                                 break
                             else:
-                                print(karakter, end='', flush=True)  # Print the modified key name for demo purposes
+                                logging.info(karakter)  # Print the modified key name for demo purposes
                                 id_gabung += karakter  # Concatenate the modified key name
 
             if id_gabung.strip():
@@ -49,15 +53,15 @@ def handle_keyboard(device_path, status, serial_port):
                             ser = serial.Serial(serial_port)
                             ser.write(b'1')
                             ser.close()
-                            print(f"Action successful on {device_path} {current_time} . Waiting for next input...\n")
+                            logging.info(f"Action successful on {device_path} {current_time} . Waiting for next input...\n")
                         except serial.SerialException as e:
-                            print(f"Serial port error: {e}")
+                            logging.error(f"Serial port error: {e}")
                     else:
-                        print(f"\nAPI response was not true on {device_path} {current_time}. Waiting for next input...\n")
+                        logging.info(f"\nAPI response was not true on {device_path} {current_time}. Waiting for next input...\n")
                 except requests.exceptions.RequestException as e:
-                    print(f"HTTP Request error: {e}")
+                    logging.error(f"HTTP Request error: {e}")
     except KeyboardInterrupt:
-        print(f"\nExiting program for {device_path}.")
+        logging.info(f"\nExiting program for {device_path}.")
 
 # Membuat dan menjalankan threads untuk kedua keyboard
 thread1 = threading.Thread(target=handle_keyboard, args=('/dev/input/event1', 'masuk', '/dev/rfcomm1'))

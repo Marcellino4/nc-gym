@@ -1,0 +1,49 @@
+Berikut cara membuat layanan systemd untuk menjalankan skrip Anda sebagai root saat boot:
+1. Buat File Unit Layanan Systemd:
+sudo nano /etc/systemd/system/connect-bluetooth.service
+
+2. Masukkan konfigurasi berikut
+[Unit]
+Description=Connect Bluetooth Devices at Startup
+After=bluetooth.service
+Wants=bluetooth.service
+
+[Service]
+Type=simple
+ExecStart=/path/to/connect-bluetooth.sh
+User=root
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=multi-user.target
+
+3. Save menggunakan Ctrl-X lalu enter
+
+4. Berikan Hak Ekseskusi pada Skrip
+sudo chmod +x /path/to/connect-bluetooth.sh
+
+5. Aktifkan layanan systemd
+sudo systemctl enable connect-bluetooth.service
+
+Jika ingin menjalankan tanpa reboot
+- sudo systemctl start connect-bluetooth.service
+
+cek status layanan
+- sudo systemctl status connect-bluetooth.service
+
+6. Tambahkan entry crontab
+sudo crontab -e
+
+jika muncul pilihan, tekan 1 untuk menggunakan sistem edit NANO
+
+7. Tambahkan entry pada baris paling bawah
+@reboot /path/to/connect-bluetooth.sh >> /path/to/connect-bluetooth.log 2>&1
+------ Jangan Lupa untuk mengganti /path/to dengan lokasi yang dibutuhkan ---------
+
+8. Simpan dengan menekan Ctrl-X lalu enter
+
+9. Lakukan reboot sistem
+sudo reboot
+
+10. Jika tidak berjalan, coba untuk memberikan akses ke script python 
+sudo chmod +x /path/to/your/script.sh
