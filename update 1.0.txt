@@ -1,0 +1,91 @@
+#!/bin/bash
+
+# Fungsi untuk memeriksa koneksi Bluetooth
+check_bluetooth_connection() {
+    device_address=$1
+    if bluetoothctl info "$device_address" | grep -q "Connected: yes"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Fungsi untuk mengatur ulang Bluetooth
+reset_bluetooth() {
+    bluetoothctl power off
+    sleep 5
+    bluetoothctl power on
+    bluetoothctl agent on
+    bluetoothctl default-agent
+}
+
+# Fungsi untuk menghapus cache Bluetooth
+clear_bluetooth_cache() {
+    systemctl stop bluetooth
+    rm -rf /var/lib/bluetooth
+    systemctl start bluetooth
+}
+
+# Daftar perangkat Bluetooth yang harus dipantau
+devices=(
+    "DC:0D:30:93:BF:8C" # PB008
+    "DC:0D:30:93:BF:11" # PB008
+    "98:D3:31:FB:5F:57" # Mikro2
+    "98:D3:31:FB:5E:5C" # Mikro3
+)
+
+# Fungsi untuk menghubungkan kembali perangkat Bluetooth
+reconnect_device() {
+    device=$1
+    timeout 10 bluetoothctl connect "$device" &> /var/www/logfile.log
+    sleep 10
+}
+
+# Inisialisasi Bluetooth
+reset_bluetooth
+
+# Menghubungkan Bluetooth dengan perangkat
+for device in "${devices[@]}"; do
+    reconnect_device "$device"
+done
+
+# Menjalankan perintah python
+if ! timeout 20 python /var/www/bt2.py; then
+    echo "Python script encountered an error" &> /var/www/logfile.log
+fi &> /var/www/logfilepy.log
+
+# Loop untuk memeriksa koneksi Bluetooth
+while true; do
+    all_connected=true
+    for device in "${devices[@]}"; do
+        if ! check_bluetooth_connection "$device"; then
+            echo "Connection lost with $device, clearing Bluetooth cache and waiting for 5 minutes to reconnect..." &> /var/www/logfile.log
+            all_connected=false
+        fi
+    done
+
+    if [ "$all_connected" = false ]; then
+        clear_bluetooth_cache
+        sleep 300  # Tunggu 5 menit
+        all_connected=true
+        for device in "${devices[@]}"; do
+            if ! check_bluetooth_connection "$device"; then
+                echo "Reconnecting $device..." &> /var/www/logfile.log
+                reconnect_device "$device"
+                if ! check_bluetooth_connection "$device"; then
+                    echo "Connection not re-established for $device" &> /var/www/logfile.log
+                    all_connected=false
+                fi
+            fi
+        done
+
+        if [ "$all_connected" = false ]; then
+            echo "One or more connections not re-established, restarting system..." &> /var/www/logfile.log
+            sudo reboot
+        else
+            echo "All devices reconnected successfully" &> /var/www/logfile.log
+        fi
+    fi
+
+    sleep 60  # Cek setiap 1 menit
+done
