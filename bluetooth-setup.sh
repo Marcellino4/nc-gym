@@ -1,4 +1,4 @@
-#!/bin/bash
+ss#!/bin/bash
 
 # untuk menjalankan zerotier 
 sudo zerotier-cli join 56374ac9a46a7313
