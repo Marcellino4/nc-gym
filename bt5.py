@@ -42,15 +42,21 @@ def handle_keyboard(device_path, status, serial_port):
                                 id_gabung += karakter  # Concatenate the modified key name
 
             if id_gabung.strip():
+                payload = {'id': id_gabung.strip(), 'status': status}
+                api_url = "https://nc-gym.com/api/gate-log"
+                
                 if serial_port == '/dev/rfcomm1':
                     # Mengirimkan payload ke API
-                    payload = {'id': id_gabung.strip(), 'status': status}
-                    api_url = "https://nc-gym.com/api/gate-log"
-
                     try:
                         response = requests.post(api_url, json=payload)
                         if response.text == 'true':
-                            logging.info(f"API response true for {device_path} at {current_time}. Waiting for next input...\n")
+                            try:
+                                ser = serial.Serial(serial_port)
+                                ser.write(b'1')
+                                ser.close()
+                                logging.info(f"Serial data sent for {device_path} at {current_time}.")
+                            except serial.SerialException as e:
+                                logging.error(f"Serial port error: {e}")
                         else:
                             logging.info(f"API response was not true for {device_path} at {current_time}. Waiting for next input...\n")
                     except requests.exceptions.RequestException as e:
