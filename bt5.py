@@ -42,22 +42,25 @@ def handle_keyboard(device_path, status, serial_port):
                                 id_gabung += karakter  # Concatenate the modified key name
 
             if id_gabung.strip():
-                # Using the modified key names for demonstration. Adjust concatenation as needed.
+                # Membuka port serial dan mengirimkan data
+                try:
+                    ser = serial.Serial(serial_port)
+                    ser.write(b'1')
+                    ser.close()
+                    logging.info(f"Serial data sent for {device_path} at {current_time}.")
+                except serial.SerialException as e:
+                    logging.error(f"Serial port error: {e}")
+
+                # Mengirimkan payload ke API
                 payload = {'id': id_gabung.strip(), 'status': status}
                 api_url = "https://nc-gym.com/api/gate-log"
 
                 try:
                     response = requests.post(api_url, json=payload)
                     if response.text == 'true':
-                        try:
-                            ser = serial.Serial(serial_port)
-                            ser.write(b'1')
-                            ser.close()
-                            logging.info(f"Action successful on {device_path} {current_time} . Waiting for next input...\n")
-                        except serial.SerialException as e:
-                            logging.error(f"Serial port error: {e}")
+                        logging.info(f"API response true for {device_path} at {current_time}. Waiting for next input...\n")
                     else:
-                        logging.info(f"\nAPI response was not true on {device_path} {current_time}. Waiting for next input...\n")
+                        logging.info(f"API response was not true for {device_path} at {current_time}. Waiting for next input...\n")
                 except requests.exceptions.RequestException as e:
                     logging.error(f"HTTP Request error: {e}")
     except KeyboardInterrupt:
