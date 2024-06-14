@@ -25,7 +25,7 @@ connect_bluetooth() {
   local bt_address=$1
   while true; do
     echo "Mencoba terhubung dengan Bluetooth device $bt_address..."
-    echo -e "connect $bt_address\n" | bluetoothctl &> /var/www/nc-gym/logfile.log
+    echo -e "connect $bt_address\nquit" | bluetoothctl &> /var/www/nc-gym/logfile.log
     if [[ $? -eq 0 ]]; then
       echo "Terhubung dengan Bluetooth device $bt_address. Menjaga koneksi..."
       sleep 2
