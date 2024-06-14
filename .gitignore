@@ -1,0 +1,5 @@
+# Ignore logfile.log
+logfile.log
+
+# Ignore logfilepy.log
+logfilepy.log
