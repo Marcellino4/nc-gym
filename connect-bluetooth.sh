@@ -99,6 +99,7 @@ while true; do
   if connect_all_devices; then
     echo "Semua perangkat terhubung dengan sukses. Memantau koneksi..."
   else
+    sudo systemctl restart connect-bluetooth.service
     echo "Terjadi masalah saat menghubungkan perangkat. Mencoba kembali dalam 10 detik..."
     sleep 10
   fi

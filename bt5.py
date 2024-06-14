@@ -68,7 +68,9 @@ def handle_keyboard(device_path, status, serial_port):
         logging.info(f"\nExiting program for {device_path}.")
 
 # Membuat dan menjalankan threads untuk kedua keyboard
+# masuk
 thread1 = threading.Thread(target=handle_keyboard, args=('/dev/input/event1', 'masuk', '/dev/rfcomm1'))
+# keluar
 thread2 = threading.Thread(target=handle_keyboard, args=('/dev/input/event2', 'keluar', '/dev/rfcomm0'))
 
 thread1.start()
