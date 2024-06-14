@@ -1,5 +1,5 @@
-Connect to OPI: - Windows (ssh root@10.242.35.9)
-		- Linux (sudo ssh 10.242.35.9)
+Connect to OPI: - Windows (ssh root@10.242.51.23)
+		- Linux (sudo ssh 10.242.51.23)
 Change directory: cd /var/www
 Check Bluetooth connect to device: hcitool con
 
