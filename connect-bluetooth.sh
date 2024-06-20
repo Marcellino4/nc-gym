@@ -27,10 +27,13 @@ connect_bluetooth() {
     echo -e "connect $bt_address\n" | bluetoothctl &>> /var/www/nc-gym/logfile.log
     if [[ $? -eq 0 ]]; then
       echo "Terhubung dengan Bluetooth device $bt_address. Menjaga koneksi..." &>> /var/www/nc-gym/logfile.log
-      return 0
+      while bluetoothctl info $bt_address | grep -q "Connected: yes"; do
+        sleep 5
+      done
+      echo "Koneksi dengan $bt_address terputus. Mencoba untuk menghubungkan kembali..." &>> /var/www/nc-gym/logfile.log
     else
       echo "Gagal terhubung atau koneksi terputus. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfile.log
-      sleep 2
+      sleep 10
     fi
   done
 }
@@ -58,10 +61,13 @@ connect_rfcomm() {
     sudo rfcomm connect "$rfcomm_device" "$bt_address" &>> /var/www/nc-gym/logfile.log
     if [[ $? -eq 0 ]]; then
       echo "Terhubung dengan rfcomm device $rfcomm_device ke $bt_address. Menjaga koneksi..." &>> /var/www/nc-gym/logfile.log
-      return 0
+      while sudo rfcomm show "$rfcomm_device" | grep -q "connected"; do
+        sleep 5
+      done
+      echo "Koneksi rfcomm dengan $bt_address terputus. Mencoba untuk menghubungkan kembali..." &>> /var/www/nc-gym/logfile.log
     else
       echo "Gagal terhubung atau koneksi terputus. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfile.log
-      sleep 2
+      sleep 10
     fi
   done
 }
@@ -86,7 +92,7 @@ run_python_script() {
     echo "Menjalankan skrip Python..."
     if ! timeout 10 python /var/www/nc-gym/bt5.py &>> /var/www/nc-gym/logfilepy.log; then
       echo "Python script encountered an error. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfilepy.log
-      sleep 2
+      sleep 10
     fi
   done
 }
@@ -100,12 +106,15 @@ while true; do
     echo "Semua perangkat terhubung dengan sukses. Memantau koneksi..." &>> /var/www/nc-gym/logfile.log
   else
     sudo systemctl restart bluetooth
+    sleep 5
     sudo systemctl daemon-reload
+    sleep 5
     sudo systemctl restart connect-bluetooth.service
+    sleep 5
     echo "Terjadi masalah saat menghubungkan perangkat. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfile.log
-    sleep 2
+    sleep 10
   fi
 
   # Periksa koneksi setiap 10 detik
-  sleep 2
+  sleep 10
 done
