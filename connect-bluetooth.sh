@@ -90,9 +90,9 @@ connect_all_devices() {
 run_python_script() {
   while true; do
     echo "Menjalankan skrip Python..."
-    if ! timeout 10 python /var/www/nc-gym/bt5.py &>> /var/www/nc-gym/logfilepy.log; then
+    if ! timeout 2 python /var/www/nc-gym/bt5.py &>> /var/www/nc-gym/logfilepy.log; then
       echo "Python script encountered an error. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfilepy.log
-      sleep 10
+      sleep 2
     fi
   done
 }
