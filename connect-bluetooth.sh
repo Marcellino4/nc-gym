@@ -23,10 +23,10 @@ bluetoothctl default-agent
 connect_bluetooth() {
   local bt_address=$1
   while true; do
-    echo "Mencoba terhubung dengan Bluetooth device $bt_address..."
+    echo "Mencoba terhubung dengan Bluetooth device $bt_address..." &>> /var/www/nc-gym/logfile.log
     echo -e "connect $bt_address\n" | bluetoothctl &>> /var/www/nc-gym/logfile.log
     if [[ $? -eq 0 ]]; then
-      echo "Terhubung dengan Bluetooth device $bt_address. Menjaga koneksi..."
+      echo "Terhubung dengan Bluetooth device $bt_address. Menjaga koneksi..." 
       return 0
     else
       echo "Gagal terhubung atau koneksi terputus. Mencoba kembali dalam 10 detik..."
@@ -54,13 +54,13 @@ connect_rfcomm() {
   local rfcomm_device=$1
   local bt_address=$2
   while true; do
-    echo "Mencoba terhubung dengan rfcomm device $rfcomm_device ke $bt_address..."
-    sudo rfcomm connect "$rfcomm_device" "$bt_address" &>> /var/www/nc-gym/logfile.log
+    echo "Mencoba terhubung dengan rfcomm device $rfcomm_device ke $bt_address..." &>> /var/www/nc-gym/logfile.log
+    sudo rfcomm connect "$rfcomm_device" "$bt_address" 
     if [[ $? -eq 0 ]]; then
-      echo "Terhubung dengan rfcomm device $rfcomm_device ke $bt_address. Menjaga koneksi..."
+      echo "Terhubung dengan rfcomm device $rfcomm_device ke $bt_address. Menjaga koneksi..." &>> /var/www/nc-gym/logfile.log
       return 0
     else
-      echo "Gagal terhubung atau koneksi terputus. Mencoba kembali dalam 10 detik..."
+      echo "Gagal terhubung atau koneksi terputus. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfile.log
       sleep 2
     fi
   done
@@ -68,8 +68,8 @@ connect_rfcomm() {
 
 # Fungsi utama untuk menghubungkan semua perangkat
 connect_all_devices() {
-  scan_and_connect_bluetooth DC:0D:30:93:BF:8C &
   scan_and_connect_bluetooth DC:0D:30:93:BF:11 &
+  scan_and_connect_bluetooth DC:0D:30:93:BF:8C &
   connect_rfcomm rfcomm1 98:D3:31:FB:5F:57 &
   connect_rfcomm rfcomm0 98:D3:31:FB:5E:5C &
 
@@ -97,10 +97,10 @@ run_python_script &
 # Jalankan fungsi utama untuk menghubungkan semua perangkat
 while true; do
   if connect_all_devices; then
-    echo "Semua perangkat terhubung dengan sukses. Memantau koneksi..."
+    echo "Semua perangkat terhubung dengan sukses. Memantau koneksi..." &>> /var/www/nc-gym/logfile.log
   else
     sudo systemctl restart connect-bluetooth.service
-    echo "Terjadi masalah saat menghubungkan perangkat. Mencoba kembali dalam 10 detik..."
+    echo "Terjadi masalah saat menghubungkan perangkat. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfile.log
     sleep 2
   fi
 
