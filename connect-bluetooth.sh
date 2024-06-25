@@ -8,17 +8,6 @@ bluetoothctl power on
 bluetoothctl agent on
 bluetoothctl default-agent
 
-# Menandai device sebagai trusted (uncomment jika perlu)
-# bluetoothctl trust DC:0D:30:93:BF:11 #PB008
-# bluetoothctl trust DC:0D:30:93:BF:8C #PB0081
-# bluetoothctl trust 98:D3:31:FB:5F:57 #Mikro2
-# bluetoothctl trust 98:D3:31:FB:5E:5C #Mikro3
-
-# Melakukan binding terhadap rfcomm0 dan rfcomm1 (uncomment jika perlu)
-# rfcomm bind rfcomm0 98:D3:31:FB:5E:5C 1
-# rfcomm bind rfcomm1 98:D3:31:FB:5F:57 1
-# sleep 5
-
 # Fungsi untuk mengkoneksikan device menggunakan bluetoothctl
 connect_bluetooth() {
   local bt_address=$1
@@ -91,6 +80,21 @@ run_python_script() {
   done
 }
 
+# Fungsi untuk mengecek status koneksi perangkat Bluetooth
+check_connections() {
+  local addresses=("DC:0D:30:93:BF:11" "DC:0D:30:93:BF:8C" "98:D3:31:FB:5F:57" "98:D3:31:FB:5E:5C")
+  for address in "${addresses[@]}"; do
+    if ! bluetoothctl info "$address" | grep -q "Connected: yes"; then
+      echo "Device $address tidak terhubung. Restarting Bluetooth service..."
+      sudo systemctl restart bluetooth
+      sudo systemctl daemon-reload
+      sudo systemctl restart connect-bluetooth.service
+      return 1
+    fi
+  done
+  return 0
+}
+
 # Jalankan skrip Python di latar belakang
 run_python_script &
 
@@ -109,6 +113,7 @@ while true; do
     sleep 5
   fi
 
-  # Periksa koneksi setiap 10 detik
-  sleep 5
+  # Periksa koneksi setiap 60 detik
+  sleep 10
+  check_connections
 done
