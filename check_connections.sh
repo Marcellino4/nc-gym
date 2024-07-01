@@ -17,8 +17,5 @@ check_connections() {
   return 0
 }
 
-# Loop untuk menjalankan pengecekan setiap 10 detik
-while true; do
-  check_connections
-  sleep 120
-done
+# Jalankan pengecekan
+check_connections
