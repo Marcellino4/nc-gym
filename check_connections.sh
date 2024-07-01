@@ -20,5 +20,5 @@ check_connections() {
 # Loop untuk menjalankan pengecekan setiap 10 detik
 while true; do
   check_connections
-  sleep 30
+  sleep 45
 done
