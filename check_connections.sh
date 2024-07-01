@@ -7,15 +7,17 @@ check_connections() {
   
   for address in "${addresses[@]}"; do
     if [[ ! " ${connected_addresses[@]} " =~ " ${address} " ]]; then
-      echo "Device $address tidak terhubung. Restarting Bluetooth service..." &>> /var/www/nc-gym/logfile.log
+      echo "$(date): Device $address tidak terhubung. Restarting Bluetooth service..." &>> /var/www/nc-gym/logfile.log
       sudo systemctl restart bluetooth
       sudo systemctl daemon-reload
       sudo systemctl restart connect-bluetooth.service
       return 1
+    else
+      echo "$(date): Device $address terhubung." &>> /var/www/nc-gym/logfile.log
     fi
   done
   return 0
 }
 
-# Jalankan pengecekan
-check_connections
+# Jalankan pengecekan dan log hasilnya
+check_connections &>> /var/www/nc-gym/check_connections.log
