@@ -46,7 +46,8 @@ check_connections() {
 
   for address in "${addresses[@]}"; do
     if ! echo "$hcitool_output" | grep -q "$address"; then
-      send_telegram_message "connect : ${address}"
+      send_telegram_message "connectnya : ${address}"
+      send_telegram_message "harusnya : ${connected_addresses}"
     fi
   done
 
