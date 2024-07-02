@@ -3,6 +3,7 @@ import subprocess
 import re
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.error import TimedOut
 
 # Token API Telegram Anda
 TELEGRAM_BOT_TOKEN = '7243366231:AAGxqP4QhS_cPv1-JHfN5NbFrT1wk7Y-TBk'
