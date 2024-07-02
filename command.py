@@ -98,24 +98,29 @@ async def evtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.message.from_user
     logger.info(f"User {user.first_name} issued /evtest command")
 
-    # Menjalankan perintah sistem
     try:
-        result = subprocess.run(['sudo', 'evtest'], check=True, capture_output=True, text=True)
+        # Menjalankan perintah untuk mendapatkan daftar perangkat input
+        result = subprocess.run(['sudo', 'evtest'], input="0\n", capture_output=True, text=True)
         output = result.stdout
 
-        # Escape karakter khusus untuk MarkdownV2
-        def escape_markdown_v2(text):
-            escape_chars = r'_*[]()~`>#+-=|{}.!'
-            return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
+        # Memilih perangkat input secara otomatis (misalnya perangkat pertama)
+        match = re.search(r'/dev/input/event\d+', output)
+        if match:
+            device = match.group(0)
+            result = subprocess.run(['sudo', 'evtest', device], capture_output=True, text=True)
+            output = result.stdout
 
-        output = escape_markdown_v2(output)
-        
-        # Potong pesan jika terlalu panjang
-        max_length = 4096
-        parts = [output[i:i + max_length] for i in range(0, len(output), max_length)]
+            # Escape karakter khusus untuk MarkdownV2
+            output = re.sub(r'([_*$begin:math:display$$end:math:display$()~`>#+\-={}!.])', r'\\\1', output)
 
-        for part in parts:
-            await update.message.reply_text(f'Hasil dari evtest:\n```\n{part}\n```', parse_mode='MarkdownV2')
+            # Potong pesan jika terlalu panjang
+            max_length = 4096
+            parts = [output[i:i + max_length] for i in range(0, len(output), max_length)]
+
+            for part in parts:
+                await update.message.reply_text(f'Hasil dari evtest:\n```\n{part}\n```', parse_mode='MarkdownV2')
+        else:
+            await update.message.reply_text('Tidak ada perangkat input yang ditemukan.')
 
     except subprocess.CalledProcessError as e:
         logger.error(f"Error running evtest: {e}")
@@ -123,7 +128,7 @@ async def evtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     except TimedOut:
         logger.error("Request timed out")
         await update.message.reply_text("Request timed out while trying to run evtest.")
-        
+
 def main() -> None:
     # Membuat application dan pass the bot's token.
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
