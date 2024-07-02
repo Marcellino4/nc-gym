@@ -8,6 +8,18 @@ CHAT_ID="-1002204066531"
 # Fungsi untuk mengirim pesan ke Telegram
 send_telegram_message() {
   local message=$1
+  local max_length=4000
+  local part
+  
+  while [ ${#message} -gt $max_length ]; do
+    part=${message:0:$max_length}
+    message=${message:$max_length}
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+         -d chat_id=${CHAT_ID} \
+         -d text="${part}" \
+         -d parse_mode="HTML" >/dev/null 2>&1
+  done
+
   curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
        -d chat_id=${CHAT_ID} \
        -d text="${message}" \
@@ -20,6 +32,7 @@ check_connections() {
   local connected_addresses=($(hcitool con | grep -oP '([0-9A-F]{2}:){5}[0-9A-F]{2}'))
   local hcitool_output=$(hcitool con)
 
+  # Mengirim hasil dari hcitool con ke Telegram
   send_telegram_message "Hasil dari hcitool con:\n<pre>${hcitool_output}</pre>"
 
   for address in "${addresses[@]}"; do
