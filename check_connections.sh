@@ -54,13 +54,13 @@ check_connections() {
       # Mengirim hasil dari hcitool con ke Telegram
       send_telegram_message "Hasil dari hcitool con:\`\`\`${hcitool_output}\`\`\`"
       send_telegram_message2 "Device $address tidak terhubung. Restarting Bluetooth service..."
-      send_telegram_message2 "------------------------------------------------------------------------"
+      send_telegram_message2 "--------------------------------"
 
       sudo systemctl restart bluetooth
       sudo systemctl daemon-reload
       sudo systemctl restart connect-bluetooth.service
-      echo "Menunggu 15 detik sebelum memeriksa koneksi lagi..." &>> /var/www/nc-gym/logfile.log
-      sleep 15
+      echo "Menunggu 30 detik sebelum memeriksa koneksi lagi..." &>> /var/www/nc-gym/logfile.log
+      sleep 30
       check_connections
       return 1
     else
