@@ -44,15 +44,14 @@ check_connections() {
   local connected_addresses=($(hcitool con | grep -oP '([0-9A-F]{2}:){5}[0-9A-F]{2}'))
   local hcitool_output=$(hcitool con)
 
-  # Mengirim hasil dari hcitool con ke Telegram
-  send_telegram_message "Hasil dari hcitool con:\`\`\`${hcitool_output}\`\`\`"
-
   for address in "${addresses[@]}"; do
     if [[ ! " ${connected_addresses[@]} " =~ " ${address} " ]]; then
       echo "$(date): Device $address tidak terhubung. Restarting Bluetooth service..." &>> /var/www/nc-gym/logfile.log
 
       # Mengirim hasil dari hcitool con ke Telegram
+      send_telegram_message "Hasil dari hcitool con:\`\`\`${hcitool_output}\`\`\`"
       send_telegram_message2 "Device $address tidak terhubung. Restarting Bluetooth service..."
+      send_telegram_message2 "------------------------------------------------------------------------"
 
       sudo systemctl restart bluetooth
       sudo systemctl daemon-reload
@@ -63,7 +62,7 @@ check_connections() {
       return 1
     else
       echo "$(date): Device $address terhubung." &>> /var/www/nc-gym/logfile.log
-      send_telegram_message2 "Device $address terhubung."
+      # send_telegram_message2 "Device $address terhubung."
     fi
   done
   return 0
