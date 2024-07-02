@@ -16,7 +16,22 @@ logger = logging.getLogger(__name__)
 
 # Fungsi untuk menangani perintah /start
 async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text('Testing restart masbroooo')
+    chat_id = update.message.chat_id
+    user = update.message.from_user
+    logger.info(f"User {user.first_name} issued /restart command")
+
+    # Mengirim pesan konfirmasi ke Telegram
+    await update.message.reply_text('Restarting Bluetooth service...')
+
+    # Menjalankan perintah sistem
+    try:
+        subprocess.run(['sudo', 'systemctl', 'restart', 'bluetooth'], check=True)
+        subprocess.run(['sudo', 'systemctl', 'daemon-reload'], check=True)
+        subprocess.run(['sudo', 'systemctl', 'restart', 'connect-bluetooth.service'], check=True)
+        await update.message.reply_text('Bluetooth service restarted successfully.')
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error restarting services: {e}")
+        await update.message.reply_text(f'Failed to restart Bluetooth service: {e}')
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     help_text = (
