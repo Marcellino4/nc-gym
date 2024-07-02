@@ -11,6 +11,9 @@ send_telegram_message() {
   local max_length=4000
   local part
   
+  # Escape karakter khusus untuk HTML
+  message=$(echo "$message" | sed 's/&/&amp;/g; s/</&lt;/g; s/>/&gt;/g')
+
   while [ ${#message} -gt $max_length ]; do
     part=${message:0:$max_length}
     message=${message:$max_length}
