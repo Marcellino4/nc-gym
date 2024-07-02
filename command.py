@@ -100,7 +100,7 @@ async def evtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     try:
         # Menjalankan perintah untuk mendapatkan daftar perangkat input
-        result = subprocess.run(['sudo', 'evtest'], capture_output=True, text=True, input="\n".encode())
+        result = subprocess.run(['sudo', 'evtest'], capture_output=True, text=True, input=b'\n')
         output = result.stdout
 
         # Memilih perangkat input secara otomatis (misalnya perangkat pertama)
