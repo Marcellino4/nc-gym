@@ -61,9 +61,19 @@ async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         output = result.stdout
 
         # Escape karakter khusus untuk MarkdownV2
-        output = re.sub(r'([\_\*\[\]\(\)\~\`\>\#\+\-\=\|\{\}\.\!])', r'\\\1', output)
+        def escape_markdown_v2(text):
+            escape_chars = r'_*\[\]()~`>#+-=|{}.!'
+            return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
+
+        output = escape_markdown_v2(output)
         
-        await update.message.reply_text(f'Hasil dari speedtest-cli --simple:\n```\n{output}\n```', parse_mode='MarkdownV2')
+        # Potong pesan jika terlalu panjang
+        max_length = 4096
+        parts = [output[i:i + max_length] for i in range(0, len(output), max_length)]
+
+        for part in parts:
+            await update.message.reply_text(f'Hasil dari speedtest-cli --simple:\n```\n{part}\n```', parse_mode='MarkdownV2')
+
     except subprocess.CalledProcessError as e:
         logger.error(f"Error running speedtest-cli: {e}")
         await update.message.reply_text(f'Failed to run speedtest-cli: {e}')
