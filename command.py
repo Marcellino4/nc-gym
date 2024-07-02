@@ -60,17 +60,6 @@ async def hcitool(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error(f"Error running hcitool: {e}")
         await update.message.reply_text(f'Failed to run hcitool: {e}')
 
-async def bakarnia(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    chat_id = update.message.chat_id
-    user = update.message.from_user
-    logger.info(f"User {user.first_name} issued /bakarnia command")
-
-    # Menjalankan perintah sistem
-    try:
-        await update.message.reply_text('NIA CECE KONTOL')
-    except subprocess.CalledProcessError as e:
-        await update.message.reply_text(f'Failed to run hcitool: {e}')
-
 # Fungsi untuk menangani perintah /speedtest
 async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.message.chat_id
@@ -111,8 +100,17 @@ def main() -> None:
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("hcitool", hcitool))
     application.add_handler(CommandHandler("speedtest", speedtest))
-    application.add_handler(CommandHandler("bakarnia", bakarnia))
-    # application.add_handler(CommandHandler("restart", restart))
+
+    async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        logger.error(msg="Exception while handling an update:", exc_info=context.error)
+        try:
+            raise context.error
+        except TimedOut:
+            await update.message.reply_text("Request timed out. Please try again.")
+        except Exception as e:
+            await update.message.reply_text(f"An error occurred: {e}")
+
+    application.add_error_handler(error_handler)
 
     # Mulai bot
     application.run_polling()
