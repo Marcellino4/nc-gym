@@ -59,8 +59,8 @@ connect_rfcomm() {
 connect_all_devices() {
   scan_and_connect_bluetooth DC:0D:30:93:BF:11 &
   scan_and_connect_bluetooth DC:0D:30:93:BF:8C &
-  # connect_rfcomm rfcomm1 98:D3:31:FB:5F:57 &
-  # connect_rfcomm rfcomm0 98:D3:31:FB:5E:5C &
+  connect_rfcomm rfcomm1 98:D3:31:FB:5F:57 &
+  connect_rfcomm rfcomm0 98:D3:31:FB:5E:5C &
 
   # Menunggu sampai semua koneksi berhasil
   wait
