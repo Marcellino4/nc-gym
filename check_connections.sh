@@ -45,6 +45,7 @@ check_connections() {
   local hcitool_output=$(hcitool con)
 
   for address in "${addresses[@]}"; do
+    send_telegram_message "connect : ${connected_addresses[@]}, seharusnya ${address}"
     if [[ ! " ${connected_addresses[@]} " =~ " ${address} " ]]; then
       echo "$(date): Device $address tidak terhubung. Restarting Bluetooth service..." &>> /var/www/nc-gym/logfile.log
 
