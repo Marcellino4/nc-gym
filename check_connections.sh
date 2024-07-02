@@ -20,8 +20,7 @@ check_connections() {
   local connected_addresses=($(hcitool con | grep -oP '([0-9A-F]{2}:){5}[0-9A-F]{2}'))
   local hcitool_output=$(hcitool con)
 
-      send_telegram_message "Hasil dari hcitool con:\n${hcitool_output}"
-
+  send_telegram_message "Hasil dari hcitool con:\n${hcitool_output}"
 
   for address in "${addresses[@]}"; do
     if [[ ! " ${connected_addresses[@]} " =~ " ${address} " ]]; then
