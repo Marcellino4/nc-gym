@@ -13,8 +13,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Fungsi untuk menangani perintah /start
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text('Hello! I am your bot. Use /restart to restart the Bluetooth service.')
+async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text('Testing restart masbroooo')
 
 # # Fungsi untuk menangani perintah /restart
 # async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -40,7 +40,7 @@ def main() -> None:
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
     # Mendapatkan dispatcher untuk mendaftarkan handler
-    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("restart", start))
     # application.add_handler(CommandHandler("restart", restart))
 
     # Mulai bot
