@@ -8,11 +8,11 @@ CHAT_ID="-1002204066531"
 # Fungsi untuk mengirim pesan ke Telegram
 send_telegram_message() {
   local message=$1
-  local max_length=4000
+  local max_length=4096
   local part
   
   # Escape karakter khusus untuk HTML
-  message=$(echo "$message" | sed 's/&/&amp;/g; s/</&lt;/g; s/>/&gt;/g')
+  message=$(echo "$message" | sed 's/&/&amp;/g; s/</&lt;/g; s/>/&gt;/g; s/"/&quot;/g; s/'"'"'/&apos;/g')
 
   while [ ${#message} -gt $max_length ]; do
     part=${message:0:$max_length}
@@ -20,13 +20,13 @@ send_telegram_message() {
     curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
          -d chat_id=${CHAT_ID} \
          -d text="${part}" \
-         -d parse_mode="HTML" >/dev/null 2>&1
+         -d parse_mode="MarkdownV2" >/dev/null 2>&1
   done
 
   curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
        -d chat_id=${CHAT_ID} \
        -d text="${message}" \
-       -d parse_mode="HTML" >/dev/null 2>&1
+       -d parse_mode="MarkdownV2" >/dev/null 2>&1
 }
 
 # Fungsi untuk mengecek status koneksi perangkat Bluetooth
@@ -36,7 +36,7 @@ check_connections() {
   local hcitool_output=$(hcitool con)
 
   # Mengirim hasil dari hcitool con ke Telegram
-  send_telegram_message "Hasil dari hcitool con:\n<pre>${hcitool_output}</pre>"
+  send_telegram_message "Hasil dari hcitool con:\n\`\`\`${hcitool_output}\`\`\`"
 
   for address in "${addresses[@]}"; do
     if [[ ! " ${connected_addresses[@]} " =~ " ${address} " ]]; then
