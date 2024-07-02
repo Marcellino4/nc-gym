@@ -50,6 +50,17 @@ async def hcitool(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error(f"Error running hcitool: {e}")
         await update.message.reply_text(f'Failed to run hcitool: {e}')
 
+async def bakarnia(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.message.chat_id
+    user = update.message.from_user
+    logger.info(f"User {user.first_name} issued /bakarnia command")
+
+    # Menjalankan perintah sistem
+    try:
+        await update.message.reply_text('NIA CECE KONTOL')
+    except subprocess.CalledProcessError as e:
+        await update.message.reply_text(f'Failed to run hcitool: {e}')
+
 # Fungsi untuk menangani perintah /speedtest
 async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.message.chat_id
@@ -58,6 +69,8 @@ async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     # Menjalankan perintah sistem
     try:
+        await update.message.reply_text('SPEEDTEST LAGI JALAN')
+
         result = subprocess.run(['speedtest', '--simple'], check=True, capture_output=True, text=True)
         output = result.stdout
 
@@ -87,6 +100,7 @@ def main() -> None:
     application.add_handler(CommandHandler("restart", restart))
     application.add_handler(CommandHandler("hcitool", hcitool))
     application.add_handler(CommandHandler("speedtest", speedtest))
+    application.add_handler(CommandHandler("bakarnia", bakarnia))
     # application.add_handler(CommandHandler("restart", restart))
 
     # Mulai bot
