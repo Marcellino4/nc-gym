@@ -48,7 +48,7 @@ check_connections() {
 
   for address in "${addresses[@]}"; do
     send_telegram_message "connectnya : ${address}"
-    send_telegram_message "harusnya : ${connected_addresses[2]}"
+    send_telegram_message "harusnya : ${connected_addresses[0]}"
     if [[ ! " ${connected_addresses[@]} " =~ " ${address} " ]]; then
       echo "$(date): Device $address tidak terhubung. Restarting Bluetooth service..." &>> /var/www/nc-gym/logfile.log
 
@@ -68,6 +68,7 @@ check_connections() {
       echo "$(date): Device $address terhubung." &>> /var/www/nc-gym/logfile.log
       # send_telegram_message2 "Device $address terhubung."
     fi
+    loopnum = 
   done
   return 0
 }
