@@ -50,6 +50,7 @@ async def hcitool(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error(f"Error running hcitool: {e}")
         await update.message.reply_text(f'Failed to run hcitool: {e}')
 
+# Fungsi untuk menangani perintah /speedtest
 async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.message.chat_id
     user = update.message.from_user
@@ -57,12 +58,12 @@ async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     # Menjalankan perintah sistem
     try:
-        result = subprocess.run(['speedtest-cli'], check=True, capture_output=True, text=True)
+        result = subprocess.run(['speedtest', '--simple'], check=True, capture_output=True, text=True)
         output = result.stdout
 
         # Escape karakter khusus untuk MarkdownV2
         def escape_markdown_v2(text):
-            escape_chars = r'_*\[\]()~`>#+-=|{}.!'
+            escape_chars = r'_*[]()~`>#+-=|{}.!'
             return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
 
         output = escape_markdown_v2(output)
@@ -72,11 +73,11 @@ async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         parts = [output[i:i + max_length] for i in range(0, len(output), max_length)]
 
         for part in parts:
-            await update.message.reply_text(f'Hasil dari speedtest-cli --simple:\n```\n{part}\n```', parse_mode='MarkdownV2')
+            await update.message.reply_text(f'Hasil dari speedtest:\n```\n{part}\n```', parse_mode='MarkdownV2')
 
     except subprocess.CalledProcessError as e:
-        logger.error(f"Error running speedtest-cli: {e}")
-        await update.message.reply_text(f'Failed to run speedtest-cli: {e}')
+        logger.error(f"Error running speedtest: {e}")
+        await update.message.reply_text(f'Failed to run speedtest: {e}')
 
 def main() -> None:
     # Membuat application dan pass the bot's token.
