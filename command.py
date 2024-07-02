@@ -17,6 +17,16 @@ logger = logging.getLogger(__name__)
 async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text('Testing restart masbroooo')
 
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    help_text = (
+        "Available commands:\n"
+        "/help - Show this help message\n"
+        "/restart - Restart the Bluetooth service\n"
+        "/hcitool - Run a hcitool and show the results\n"
+        "/speedtest - Run a speedtest and show the results\n"
+    )
+    await update.message.reply_text(help_text)
+
 # # Fungsi untuk menangani perintah /restart
 # async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 #     chat_id = update.message.chat_id
@@ -69,7 +79,7 @@ async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     # Menjalankan perintah sistem
     try:
-        await update.message.reply_text('SPEEDTEST LAGI JALAN')
+        await update.message.reply_text('SPEEDTEST LAGI JALAN.. MOHON BERSABAR')
 
         result = subprocess.run(['speedtest', '--simple'], check=True, capture_output=True, text=True)
         output = result.stdout
@@ -98,6 +108,7 @@ def main() -> None:
 
     # Mendapatkan dispatcher untuk mendaftarkan handler
     application.add_handler(CommandHandler("restart", restart))
+    application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("hcitool", hcitool))
     application.add_handler(CommandHandler("speedtest", speedtest))
     application.add_handler(CommandHandler("bakarnia", bakarnia))
