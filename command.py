@@ -49,6 +49,20 @@ async def hcitool(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error(f"Error running hcitool: {e}")
         await update.message.reply_text(f'Failed to run hcitool: {e}')
 
+async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.message.chat_id
+    user = update.message.from_user
+    logger.info(f"User {user.first_name} issued /speedtest command")
+
+    # Menjalankan perintah sistem
+    try:
+        result = subprocess.run(['speedtest-cli', '--simple'], check=True, capture_output=True, text=True)
+        output = result.stdout
+        await update.message.reply_text(f'Hasil dari speedtest-cli --simple:\n```\n{output}\n```', parse_mode='MarkdownV2')
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error running speedtest-cli: {e}")
+        await update.message.reply_text(f'Failed to run speedtest-cli: {e}')
+
 def main() -> None:
     # Membuat application dan pass the bot's token.
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
@@ -56,6 +70,7 @@ def main() -> None:
     # Mendapatkan dispatcher untuk mendaftarkan handler
     application.add_handler(CommandHandler("restart", restart))
     application.add_handler(CommandHandler("hcitool", hcitool))
+    application.add_handler(CommandHandler("speedtest", speedtest))
     # application.add_handler(CommandHandler("restart", restart))
 
     # Mulai bot
