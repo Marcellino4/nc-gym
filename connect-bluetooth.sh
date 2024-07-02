@@ -104,11 +104,8 @@ while true; do
     echo "Semua perangkat terhubung dengan sukses. Memantau koneksi..." &>> /var/www/nc-gym/logfile.log
   else
     sudo systemctl restart bluetooth
-    sleep 5
     sudo systemctl daemon-reload
-    sleep 5
     sudo systemctl restart connect-bluetooth.service
-    sleep 5
     echo "Terjadi masalah saat menghubungkan perangkat. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfile.log
     sleep 5
   fi
