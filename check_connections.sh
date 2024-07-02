@@ -11,7 +11,7 @@ send_telegram_message() {
   curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
        -d chat_id=${CHAT_ID} \
        -d text="${message}" \
-       -d parse_mode="HTML"
+       -d parse_mode="HTML" >/dev/null 2>&1
 }
 
 # Fungsi untuk mengecek status koneksi perangkat Bluetooth
@@ -20,7 +20,7 @@ check_connections() {
   local connected_addresses=($(hcitool con | grep -oP '([0-9A-F]{2}:){5}[0-9A-F]{2}'))
   local hcitool_output=$(hcitool con)
 
-  send_telegram_message "Hasil dari hcitool con:\n${hcitool_output}"
+  send_telegram_message "Hasil dari hcitool con:\n<pre>${hcitool_output}</pre>"
 
   for address in "${addresses[@]}"; do
     if [[ ! " ${connected_addresses[@]} " =~ " ${address} " ]]; then
