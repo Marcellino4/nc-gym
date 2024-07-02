@@ -58,6 +58,10 @@ async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         result = subprocess.run(['speedtest-cli', '--simple'], check=True, capture_output=True, text=True)
         output = result.stdout
+
+        # Escape karakter khusus untuk MarkdownV2
+        output = re.sub(r'([\\`*_{}$begin:math:display$$end:math:display$()#+.!-])', r'\\\1', output)
+        
         await update.message.reply_text(f'Hasil dari speedtest-cli --simple:\n```\n{output}\n```', parse_mode='MarkdownV2')
     except subprocess.CalledProcessError as e:
         logger.error(f"Error running speedtest-cli: {e}")
