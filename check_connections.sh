@@ -59,8 +59,8 @@ check_connections() {
       sudo systemctl restart bluetooth
       sudo systemctl daemon-reload
       sudo systemctl restart connect-bluetooth.service
-      echo "Menunggu 60 detik sebelum memeriksa koneksi lagi..." &>> /var/www/nc-gym/logfile.log
-      sleep 60
+      echo "Menunggu 30 detik sebelum memeriksa koneksi lagi..." &>> /var/www/nc-gym/logfile.log
+      sleep 30
       check_connections
       return 1
     else
