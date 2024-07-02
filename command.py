@@ -25,6 +25,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "/restart - Restart the Bluetooth service\n"
         "/hcitool - Run a hcitool and show the results\n"
         "/speedtest - Run a speedtest and show the results\n"
+        "/evtest - Run a evtest and show the event\n"
     )
     await update.message.reply_text(help_text)
 
@@ -92,6 +93,37 @@ async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error(f"Error running speedtest: {e}")
         await update.message.reply_text(f'Failed to run speedtest: {e}')
 
+async def evtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.message.chat_id
+    user = update.message.from_user
+    logger.info(f"User {user.first_name} issued /evtest command")
+
+    # Menjalankan perintah sistem
+    try:
+        result = subprocess.run(['sudo', 'evtest'], check=True, capture_output=True, text=True)
+        output = result.stdout
+
+        # Escape karakter khusus untuk MarkdownV2
+        def escape_markdown_v2(text):
+            escape_chars = r'_*[]()~`>#+-=|{}.!'
+            return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
+
+        output = escape_markdown_v2(output)
+        
+        # Potong pesan jika terlalu panjang
+        max_length = 4096
+        parts = [output[i:i + max_length] for i in range(0, len(output), max_length)]
+
+        for part in parts:
+            await update.message.reply_text(f'Hasil dari evtest:\n```\n{part}\n```', parse_mode='MarkdownV2')
+
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error running evtest: {e}")
+        await update.message.reply_text(f'Failed to run evtest: {e}')
+    except TimedOut:
+        logger.error("Request timed out")
+        await update.message.reply_text("Request timed out while trying to run evtest.")
+        
 def main() -> None:
     # Membuat application dan pass the bot's token.
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
@@ -101,6 +133,7 @@ def main() -> None:
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("hcitool", hcitool))
     application.add_handler(CommandHandler("speedtest", speedtest))
+    application.add_handler(CommandHandler("evtest", evtest))
 
     async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error(msg="Exception while handling an update:", exc_info=context.error)
