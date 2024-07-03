@@ -48,28 +48,29 @@ key_codes = {
 
 scanned_code = ""
 
-try:
-    while True:
-        for event in dev.read_loop():
-            if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
-                if event.code in key_codes:
-                    scanned_code += key_codes[event.code]
-                elif event.code == ecodes.KEY_ENTER:
-                    print(f"Scanned code: {scanned_code}")
-                    api_url = "https://nc-gym.com/api/gate-log"
-                    payload = {'id': scanned_code, 'status': 'masuk'}
-                    response = requests.post(api_url, json=payload)
+async def main():
+    try:
+        while True:
+            for event in dev.read_loop():
+                if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
+                    if event.code in key_codes:
+                        scanned_code += key_codes[event.code]
+                    elif event.code == ecodes.KEY_ENTER:
+                        print(f"Scanned code: {scanned_code}")
+                        api_url = "https://nc-gym.com/api/gate-log"
+                        payload = {'id': scanned_code, 'status': 'masuk'}
+                        response = requests.post(api_url, json=payload)
 
-                    if response.text == 'true':
-                        ser.write(b'1')
-                        print(f"Berhasil")
-                        await send_telegram_message(f"Access granted (Entry Gate) for ID: {scanned_code}")
-                    else:
-                        print(f"Gagal")
-                        await send_telegram_message(f"Access denied (Entry Gate) for ID: {scanned_code}")
-                    
-                    scanned_code = ""  # Reset setelah mengirim data
-                    break
+                        if response.text == 'true':
+                            ser.write(b'1')
+                            print(f"Berhasil")
+                            await send_telegram_message(f"Access granted (Entry Gate) for ID: {scanned_code}")
+                        else:
+                            print(f"Gagal")
+                            await send_telegram_message(f"Access denied (Entry Gate) for ID: {scanned_code}")
+                        
+                        scanned_code = ""  # Reset setelah mengirim data
+                        break
 
 except KeyboardInterrupt:
     print("Program interrupted. Exiting...")
