@@ -9,10 +9,10 @@ ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
 # Fungsi untuk mendapatkan perangkat input yang sesuai (event1 atau event2)
 def find_input_device():
     try:
-        dev2 = InputDevice('/dev/input/event2')
+        dev2 = InputDevice('/dev/input/event1')
         return dev2
     except FileNotFoundError:
-        raise Exception("No suitable input device found at /dev/input/event2.")
+        raise Exception("No suitable input device found at /dev/input/event1.")
 
 # Inisialisasi perangkat input
 dev = find_input_device()
