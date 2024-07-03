@@ -37,15 +37,16 @@ key_codes = {
 scanned_code = ""
 
 try:
-    for event in dev.read_loop():
-        if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
-            if event.code in key_codes:
-                scanned_code += key_codes[event.code]
-            elif event.code == ecodes.KEY_ENTER:
-                print(f"Scanned code: {scanned_code}")
-                ser.write(b'1')
-                ser.close()
-                break
+    while True:
+        for event in dev.read_loop():
+            if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
+                if event.code in key_codes:
+                    scanned_code += key_codes[event.code]
+                elif event.code == ecodes.KEY_ENTER:
+                    print(f"Scanned code: {scanned_code}")
+                    ser.write(b'1')
+                    scanned_code = ""  # Reset setelah mengirim data
+                    break
 
 except KeyboardInterrupt:
     print("Program interrupted. Exiting...")
