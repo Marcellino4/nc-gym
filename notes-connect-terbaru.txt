@@ -1,0 +1,11 @@
+vncserver :1 -geometry 1024x768 -depth 24
+
+bluetoothctl
+connect DC:0D:30:93:BF:11
+connect DC:0D:30:93:BF:8C
+sudo rfcomm connect rfcomm0 98:D3:31:FB:5E:5C -> keluar
+sudo rfcomm connect rfcomm1 98:D3:31:FB:5F:57 -> masuk
+
+cd /var/www/nc-gym
+test.py -> masuk
+test.py -> keluar
