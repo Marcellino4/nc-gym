@@ -55,6 +55,12 @@ connect_rfcomm() {
   done
 }
 
+remove DC:0D:30:93:BF:11
+pair DC:0D:30:93:BF:11
+connect DC:0D:30:93:BF:11
+connect DC:0D:30:93:BF:8C
+trust DC:0D:30:93:BF:11
+
 # Fungsi utama untuk menghubungkan semua perangkat
 connect_all_devices() {
   scan_and_connect_bluetooth DC:0D:30:93:BF:11 &
@@ -74,12 +80,12 @@ run_python_script() {
   while true; do
     echo "Menjalankan skrip Python..."
     
-    if ! timeout 10 python /var/www/nc-gym/bt5.py &>> /var/www/nc-gym/logfilepy.log; then
-      echo "bt5.py encountered an error. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfilepy.log
-      sleep 10
-    else
-      sleep 5
-    fi
+    # if ! timeout 10 python /var/www/nc-gym/bt5.py &>> /var/www/nc-gym/logfilepy.log; then
+    #   echo "bt5.py encountered an error. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfilepy.log
+    #   sleep 10
+    # else
+    #   sleep 5
+    # fi
     
     if ! timeout 10 python /var/www/nc-gym/command.py &>> /var/www/nc-gym/logfilepy.log; then
       echo "command.py encountered an error. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfilepy.log
