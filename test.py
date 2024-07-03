@@ -1,20 +1,18 @@
 import serial
 import requests
-from evdev import InputDevice, list_devices, categorize, ecodes
+from evdev import InputDevice, categorize, ecodes
 
 # Inisialisasi port serial
-serial_port = '/dev/rfcomm1'
+serial_port = '/dev/rfcomm0'
 ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
 
-# Fungsi untuk mendapatkan perangkat input yang sesuai
+# Fungsi untuk mendapatkan perangkat input yang sesuai (event1 atau event2)
 def find_input_device():
-    devices = [InputDevice(fn) for fn in list_devices()]
-    for device in devices:
-        print(f"Found device: {device.name} at {device.fn}")
-        # Asumsikan perangkat yang cocok adalah PB008
-        if 'PB008' in device.name:
-            return device
-    raise Exception("No suitable input device found.")
+    try:
+        dev2 = InputDevice('/dev/input/event2')
+        return dev2
+    except FileNotFoundError:
+        raise Exception("No suitable input device found at /dev/input/event2.")
 
 # Inisialisasi perangkat input
 dev = find_input_device()
@@ -45,16 +43,13 @@ try:
                     scanned_code += key_codes[event.code]
                 elif event.code == ecodes.KEY_ENTER:
                     print(f"Scanned code: {scanned_code}")
-                    api_url = "https://nc-gym.com/api/gate-log"
-                    payload = {'id': scanned_code, 'status': 'masuk'}
-                    response = requests.post(api_url, json=payload)
-
-                    if response.text == 'true':
+                    
+                    # Kirim data ke API
+                    response = requests.post('URL_API', data={'scanned_code': scanned_code})
+                    
+                    if response.status_code == 200 and response.json().get('value') == 1:
                         ser.write(b'1')
-                        print(f"Berhasil")
-                    else:
-                        ser.write(b'0')
-                        print(f"Gagal")
+                        print("Berhasil mengirim sinyal ke relay.")
                     
                     scanned_code = ""  # Reset setelah mengirim data
                     break
