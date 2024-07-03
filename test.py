@@ -43,7 +43,7 @@ try:
                 scanned_code += key_codes[event.code]
             elif event.code == ecodes.KEY_ENTER:
                 print(f"Scanned code: {scanned_code}")
-                ser.write(scanned_code.encode())
+                ser.write(b'1')
                 ser.close()
                 break
 
