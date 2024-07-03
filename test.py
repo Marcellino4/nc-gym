@@ -2,7 +2,7 @@ import serial
 from evdev import InputDevice, list_devices, categorize, ecodes
 
 # Inisialisasi port serial
-serial_port = '/dev/rfcomm0'
+serial_port = '/dev/rfcomm1'
 ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
 
 # Fungsi untuk mendapatkan perangkat input yang sesuai
