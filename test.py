@@ -43,8 +43,8 @@ try:
                     scanned_code += key_codes[event.code]
                 elif event.code == ecodes.KEY_ENTER:
                     print(f"Scanned code: {scanned_code}")
-                    
-                    response = requests.post('URL_API', data={'scanned_code': scanned_code})
+                    api_url = "https://nc-gym.com/api/gate-log"
+                    response = requests.post(api_url, data={'scanned_code': scanned_code})
                     
                     if response.status_code == 200 and response.json().get('value') == 1:
                         ser.write(b'1')
