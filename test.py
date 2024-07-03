@@ -44,11 +44,14 @@ try:
                 elif event.code == ecodes.KEY_ENTER:
                     print(f"Scanned code: {scanned_code}")
                     api_url = "https://nc-gym.com/api/gate-log"
-                    response = requests.post(api_url, data={'scanned_code': scanned_code})
-                    
+                    payload = {'id': scanned_code, 'status': 'masuk'}
+                    response = requests.post(api_url, json=payload)
+
                     if response.status_code == 200 and response.json().get('value') == 1:
                         ser.write(b'1')
-                        print("Berhasil mengirim sinyal ke relay.")
+                        print(f"Berhasil")
+                    else:
+                        print(f"Gagal")
                     
                     scanned_code = ""  # Reset setelah mengirim data
                     break
