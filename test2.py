@@ -1,12 +1,27 @@
 import serial
 import requests
+import asyncio
 from evdev import InputDevice, categorize, ecodes
+from telegram import Bot
 
 # Inisialisasi port serial
 serial_port = '/dev/rfcomm0'
 ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
 
-# Fungsi untuk mendapatkan perangkat input yang sesuai (event1 atau event2)
+TELEGRAM_BOT_TOKEN = '7243366231:AAGxqP4QhS_cPv1-JHfN5NbFrT1wk7Y-TBk'
+CHAT_ID = '-1002204066531'
+
+# Inisialisasi bot telegram
+bot = Bot(token=TELEGRAM_BOT_TOKEN)
+
+# Fungsi untuk mengirim pesan ke Telegram
+async def send_telegram_message(message):
+    try:
+        await bot.send_message(chat_id=CHAT_ID, text=message)
+    except Exception as e:
+        print(f"Failed to send message: {e}")
+
+# Fungsi untuk mendapatkan perangkat input yang sesuai (event2)
 def find_input_device():
     try:
         dev2 = InputDevice('/dev/input/event1')
@@ -33,29 +48,35 @@ key_codes = {
     ecodes.KEY_9: '9'
 }
 
-scanned_code = ""
+async def main():
+    scanned_code = ""
+    try:
+        while True:
+            for event in dev.read_loop():
+                if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
+                    if event.code in key_codes:
+                        scanned_code += key_codes[event.code]
+                    elif event.code == ecodes.KEY_ENTER:
+                        print(f"Scanned code: {scanned_code}")
+                        api_url = "https://nc-gym.com/api/gate-log"
+                        payload = {'id': scanned_code, 'status': 'keluar'}
+                        response = requests.post(api_url, json=payload)
 
-try:
-    while True:
-        for event in dev.read_loop():
-            if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
-                if event.code in key_codes:
-                    scanned_code += key_codes[event.code]
-                elif event.code == ecodes.KEY_ENTER:
-                    print(f"Scanned code: {scanned_code}")
-                    api_url = "https://nc-gym.com/api/gate-log"
-                    payload = {'id': scanned_code, 'status': 'keluar'}
-                    response = requests.post(api_url, json=payload)
+                        if response.text == 'true':
+                            ser.write(b'1')
+                            print("Berhasil")
+                            await send_telegram_message(f"Access granted (Exit Gate) for ID: {scanned_code}")
+                        else:
+                            print("Gagal")
+                            await send_telegram_message(f"Access denied (Exit Gate) for ID: {scanned_code}")
+                        
+                        scanned_code = ""  # Reset setelah mengirim data
+                        break
+    except KeyboardInterrupt:
+        print("Program interrupted. Exiting...")
+    finally:
+        ser.close()
+        dev.close()
 
-                    if response.text == 'true':
-                        ser.write(b'1')
-                        print(f"Berhasil")
-                    else:
-                        print(f"Gagal")
-                    
-                    scanned_code = ""  # Reset setelah mengirim data
-                    break
-
-except KeyboardInterrupt:
-    print("Program interrupted. Exiting...")
-    ser.close()
+# Jalankan loop event asyncio
+asyncio.run(main())
