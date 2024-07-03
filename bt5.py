@@ -87,16 +87,16 @@ def handle_keyboard(device_path, status, serial_port):
 
 # Membuat dan menjalankan threads untuk kedua keyboard
 # masuk
-thread1 = threading.Thread(target=handle_keyboard, args=('/dev/input/event1', 'masuk', '/dev/rfcomm1'))
+# thread1 = threading.Thread(target=handle_keyboard, args=('/dev/input/event1', 'masuk', '/dev/rfcomm1'))
 # keluar
 thread2 = threading.Thread(target=handle_keyboard, args=('/dev/input/event2', 'keluar', '/dev/rfcomm0'))
 
-thread1.start()
-write_log(f"Gate Masuk Start")
+# thread1.start()
+# write_log(f"Gate Masuk Start")
 thread2.start()
 write_log(f"Gate Keluar Start")
 
-thread1.join()
-write_log(f"Gate Masuk Join")
+# thread1.join()
+# write_log(f"Gate Masuk Join")
 thread2.join()
 write_log(f"Gate Masuk Join")
