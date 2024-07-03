@@ -55,11 +55,11 @@ connect_rfcomm() {
   done
 }
 
-remove DC:0D:30:93:BF:11
-pair DC:0D:30:93:BF:11
-connect DC:0D:30:93:BF:11
-connect DC:0D:30:93:BF:8C
-trust DC:0D:30:93:BF:11
+# remove DC:0D:30:93:BF:11
+# pair DC:0D:30:93:BF:11
+# connect DC:0D:30:93:BF:11
+# connect DC:0D:30:93:BF:8C
+# trust DC:0D:30:93:BF:11
 
 # Fungsi utama untuk menghubungkan semua perangkat
 connect_all_devices() {
