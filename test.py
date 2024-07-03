@@ -37,17 +37,9 @@ key_codes = {
 try:
     for event in dev.read_loop():
         if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
-            print(f"Event: {event.type} - {event.code} - {event.value}")
-
-            if event.code in key_codes:
-                ser.write(key_codes[event.code])
-                print(f"Sent '{key_codes[event.code].decode()}' to serial port")
-
-            # Keluar jika tombol 'q' ditekan
-            if event.code == ecodes.KEY_Q:
-                print("Exiting...")
-                ser.close()
-                break
+            ser.write(b'1')
+            ser.close()
+            break
 
 except KeyboardInterrupt:
     print("Program interrupted. Exiting...")
