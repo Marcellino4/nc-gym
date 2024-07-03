@@ -127,7 +127,7 @@ def main() -> None:
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
     # Mendapatkan dispatcher untuk mendaftarkan handler
-    application.add_handler(CommandHandler("restart", restart))
+    # application.add_handler(CommandHandler("restart", restart))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("hcitool", hcitool))
     application.add_handler(CommandHandler("speedtest", speedtest))
