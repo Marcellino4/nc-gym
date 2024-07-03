@@ -63,10 +63,10 @@ try:
                     if response.text == 'true':
                         ser.write(b'1')
                         print(f"Berhasil")
-                        send_telegram_message(f"Access granted (Entry Gate) for ID: {scanned_code}")
+                        await send_telegram_message(f"Access granted (Entry Gate) for ID: {scanned_code}")
                     else:
                         print(f"Gagal")
-                        send_telegram_message(f"Access denied (Entry Gate) for ID: {scanned_code}")
+                        await send_telegram_message(f"Access denied (Entry Gate) for ID: {scanned_code}")
                     
                     scanned_code = ""  # Reset setelah mengirim data
                     break
