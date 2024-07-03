@@ -1,4 +1,5 @@
 import serial
+import requests
 from evdev import InputDevice, list_devices, categorize, ecodes
 
 # Inisialisasi port serial
@@ -44,7 +45,17 @@ try:
                     scanned_code += key_codes[event.code]
                 elif event.code == ecodes.KEY_ENTER:
                     print(f"Scanned code: {scanned_code}")
-                    ser.write(b'1')
+                    api_url = "https://nc-gym.com/api/gate-log"
+                    payload = {'id': scanned_code, 'status': 'masuk'}
+                    response = requests.post(api_url, json=payload)
+
+                    if response.status_code == 200 and response.json().get('value') == 1:
+                        ser.write(b'1')
+                        print(f"Berhasil")
+                    else:
+                        ser.write(b'0')
+                        print(f"Gagal")
+                    
                     scanned_code = ""  # Reset setelah mengirim data
                     break
 
