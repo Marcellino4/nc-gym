@@ -1,36 +1,43 @@
 import serial
-import datetime
-import os
+from inputs import get_key
 
-# Fungsi untuk menulis log ke file
-def write_log(message):
-    with open('log_gate.log', 'a') as f:
-        f.write(f"{datetime.datetime.now()} - {message}\n")
+# Inisialisasi port serial
+serial_port = '/dev/rfcomm0'
+ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
 
-# Memeriksa dan mengatur izin file log_gate.log
-def check_file_permissions(file_path):
-    if not os.path.exists(file_path):
-        with open(file_path, 'w') as f:
-            pass
-    os.chmod(file_path, 0o666)
+print("Listening for keyboard events. Press 'q' to exit.")
 
-# Path ke port serial yang terhubung
-serial_port = '/dev/rfcomm1'  # Pastikan path ini sesuai dengan perangkat yang terhubung
-
-# Memastikan file log_gate.log memiliki izin yang tepat
-check_file_permissions('log_gate.log')
+# Daftar key code untuk angka 0-9
+key_codes = {
+    'KEY_0': b'0',
+    'KEY_1': b'1',
+    'KEY_2': b'2',
+    'KEY_3': b'3',
+    'KEY_4': b'4',
+    'KEY_5': b'5',
+    'KEY_6': b'6',
+    'KEY_7': b'7',
+    'KEY_8': b'8',
+    'KEY_9': b'9'
+}
 
 try:
-    # Membuka koneksi serial
-    ser = serial.Serial(serial_port)
-    ser.write(b'1')  # Menulis data ke port serial
-    write_log("Data telah dikirim.")
-except serial.SerialException as e:
-    write_log(f"Terjadi kesalahan saat membuka atau menggunakan port serial: {e}")
-except Exception as e:
-    write_log(f"Terjadi kesalahan: {e}")
-finally:
-    # Pastikan koneksi serial ditutup dengan benar
-    if 'ser' in locals() and ser.is_open:
-        ser.close()
-        write_log("Koneksi serial telah ditutup.")
+    while True:
+        events = get_key()
+        for event in events:
+            if event.ev_type == 'Key' and event.ev_state == 1:  # Hanya saat tombol ditekan
+                print(f"Event: {event.ev_type} - {event.ev_code} - {event.ev_state}")
+
+                if event.ev_code in key_codes:
+                    ser.write(key_codes[event.ev_code])
+                    print(f"Sent '{key_codes[event.ev_code].decode()}' to serial port")
+
+                # Keluar jika tombol 'q' ditekan
+                if event.ev_code == 'KEY_Q':
+                    print("Exiting...")
+                    ser.close()
+                    exit()
+
+except KeyboardInterrupt:
+    print("Program interrupted. Exiting...")
+    ser.close()
