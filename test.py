@@ -2,7 +2,7 @@ import serial
 from evdev import InputDevice, list_devices, categorize, ecodes
 
 # Inisialisasi port serial
-serial_port = '/dev/rfcomm1'
+serial_port = '/dev/rfcomm0'
 ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
 
 # Fungsi untuk mendapatkan perangkat input yang sesuai
@@ -37,9 +37,10 @@ key_codes = {
 try:
     for event in dev.read_loop():
         if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
-            ser.write(b'1')
-            ser.close()
-            break
+        print(event.value)
+        ser.write(b'1')
+        ser.close()
+        break
 
 except KeyboardInterrupt:
     print("Program interrupted. Exiting...")
