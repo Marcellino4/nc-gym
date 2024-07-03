@@ -13,13 +13,15 @@ CHAT_ID = '-1002204066531'
 
 # Inisialisasi bot telegram
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
+
+# Fungsi untuk mengirim pesan ke Telegram
 async def send_telegram_message(message):
     try:
         await bot.send_message(chat_id=CHAT_ID, text=message)
     except Exception as e:
         print(f"Failed to send message: {e}")
 
-# Fungsi untuk mendapatkan perangkat input yang sesuai (event1 atau event2)
+# Fungsi untuk mendapatkan perangkat input yang sesuai (event2)
 def find_input_device():
     try:
         dev2 = InputDevice('/dev/input/event2')
@@ -46,9 +48,8 @@ key_codes = {
     ecodes.KEY_9: '9'
 }
 
-scanned_code = ""
-
 async def main():
+    scanned_code = ""
     try:
         while True:
             for event in dev.read_loop():
@@ -63,17 +64,19 @@ async def main():
 
                         if response.text == 'true':
                             ser.write(b'1')
-                            print(f"Berhasil")
-                            await send_telegram_message(f"Access granted (Entry Gate) for ID: {scanned_code}")
+                            print("Berhasil")
+                            await send_telegram_message(f"Access granted for ID: {scanned_code}")
                         else:
-                            print(f"Gagal")
-                            await send_telegram_message(f"Access denied (Entry Gate) for ID: {scanned_code}")
+                            print("Gagal")
+                            await send_telegram_message(f"Access denied for ID: {scanned_code}")
                         
                         scanned_code = ""  # Reset setelah mengirim data
                         break
-
     except KeyboardInterrupt:
         print("Program interrupted. Exiting...")
+    finally:
         ser.close()
+        dev.close()
 
+# Jalankan loop event asyncio
 asyncio.run(main())
