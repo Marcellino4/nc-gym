@@ -72,6 +72,8 @@ async def main():
                         scanned_code = ""  # Reset setelah mengirim data
                         break
 
-except KeyboardInterrupt:
-    print("Program interrupted. Exiting...")
-    ser.close()
+    except KeyboardInterrupt:
+        print("Program interrupted. Exiting...")
+        ser.close()
+
+asyncio.run(main())
