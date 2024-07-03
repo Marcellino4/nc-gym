@@ -37,10 +37,10 @@ key_codes = {
 try:
     for event in dev.read_loop():
         if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
-        print(event.value)
-        ser.write(b'1')
-        ser.close()
-        break
+            print(event.value)
+            ser.write(b'1')
+            ser.close()
+            break
 
 except KeyboardInterrupt:
     print("Program interrupted. Exiting...")
