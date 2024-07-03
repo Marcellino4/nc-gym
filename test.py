@@ -49,7 +49,7 @@ try:
                     payload = {'id': scanned_code, 'status': 'masuk'}
                     response = requests.post(api_url, json=payload)
 
-                    if response.status_code == 200 and response.json().get('value') == 1:
+                    if response.text == 'true'::
                         ser.write(b'1')
                         print(f"Berhasil")
                     else:
