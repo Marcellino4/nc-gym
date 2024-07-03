@@ -44,7 +44,6 @@ try:
                 elif event.code == ecodes.KEY_ENTER:
                     print(f"Scanned code: {scanned_code}")
                     
-                    # Kirim data ke API
                     response = requests.post('URL_API', data={'scanned_code': scanned_code})
                     
                     if response.status_code == 200 and response.json().get('value') == 1:
