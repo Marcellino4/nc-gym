@@ -68,7 +68,7 @@ async def main():
                             await send_telegram_message(f"Access granted (Exit Gate) for ID: {scanned_code}")
                         else:
                             print("Gagal")
-                            await send_telegram_message(f"Access denied (Exit Gate) for ID: {scanned_code}")
+                            await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}")
                         
                         scanned_code = ""  # Reset setelah mengirim data
                         break
