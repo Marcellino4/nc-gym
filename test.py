@@ -1,10 +1,22 @@
 import serial
 import requests
 from evdev import InputDevice, categorize, ecodes
+from telegram import Bot
 
 # Inisialisasi port serial
 serial_port = '/dev/rfcomm1'
 ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
+
+TELEGRAM_BOT_TOKEN = '7243366231:AAGxqP4QhS_cPv1-JHfN5NbFrT1wk7Y-TBk'
+CHAT_ID = '-1002204066531'
+
+# Inisialisasi bot telegram
+bot = Bot(token=TELEGRAM_BOT_TOKEN)
+def send_telegram_message(message):
+    try:
+        bot.send_message(chat_id=CHAT_ID, text=message)
+    except Exception as e:
+        print(f"Failed to send message: {e}")
 
 # Fungsi untuk mendapatkan perangkat input yang sesuai (event1 atau event2)
 def find_input_device():
@@ -50,8 +62,10 @@ try:
                     if response.text == 'true':
                         ser.write(b'1')
                         print(f"Berhasil")
+                        send_telegram_message(f"Access granted (Entry Gate) for ID: {scanned_code}")
                     else:
                         print(f"Gagal")
+                        send_telegram_message(f"Access denied (Entry Gate) for ID: {scanned_code}")
                     
                     scanned_code = ""  # Reset setelah mengirim data
                     break
