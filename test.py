@@ -15,7 +15,7 @@ def check_file_permissions(file_path):
     os.chmod(file_path, 0o666)
 
 # Path ke port serial yang terhubung
-serial_port = '/dev/rfcomm0'  # Pastikan path ini sesuai dengan perangkat yang terhubung
+serial_port = '/dev/rfcomm1'  # Pastikan path ini sesuai dengan perangkat yang terhubung
 
 # Memastikan file log_gate.log memiliki izin yang tepat
 check_file_permissions('log_gate.log')
