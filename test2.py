@@ -44,7 +44,7 @@ try:
                 elif event.code == ecodes.KEY_ENTER:
                     print(f"Scanned code: {scanned_code}")
                     api_url = "https://nc-gym.com/api/gate-log"
-                    payload = {'id': scanned_code, 'status': 'masuk'}
+                    payload = {'id': scanned_code, 'status': 'keluar'}
                     response = requests.post(api_url, json=payload)
 
                     if response.text == 'true':
