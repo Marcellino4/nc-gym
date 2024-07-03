@@ -1,5 +1,6 @@
 import serial
 import requests
+import asyncio
 from evdev import InputDevice, categorize, ecodes
 from telegram import Bot
 
@@ -12,9 +13,9 @@ CHAT_ID = '-1002204066531'
 
 # Inisialisasi bot telegram
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
-def send_telegram_message(message):
+async def send_telegram_message(message):
     try:
-        bot.send_message(chat_id=CHAT_ID, text=message)
+        await bot.send_message(chat_id=CHAT_ID, text=message)
     except Exception as e:
         print(f"Failed to send message: {e}")
 
