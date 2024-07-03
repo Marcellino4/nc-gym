@@ -114,14 +114,14 @@ while true; do
   if connect_all_devices; then
     echo "Semua perangkat terhubung dengan sukses. Memantau koneksi..." &>> /var/www/nc-gym/logfile.log
   else
-    sudo systemctl restart bluetooth
-    sudo systemctl daemon-reload
-    sudo systemctl restart connect-bluetooth.service
-    echo "Terjadi masalah saat menghubungkan perangkat. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfile.log
-    sleep 5
+    # sudo systemctl restart bluetooth
+    # sudo systemctl daemon-reload
+    # sudo systemctl restart connect-bluetooth.service
+    # echo "Terjadi masalah saat menghubungkan perangkat. Mencoba kembali dalam 10 detik..." &>> /var/www/nc-gym/logfile.log
+    # sleep 5
   fi
 
   # Periksa koneksi setiap 60 detik
-  sleep 10
-  check_connections
+  # sleep 10
+  # check_connections
 done
