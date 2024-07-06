@@ -60,15 +60,19 @@ async def main():
                         print(f"Scanned code: {scanned_code}")
                         api_url = "https://nc-gym.com/api/gate-log"
                         payload = {'id': scanned_code, 'status': 'keluar'}
-                        response = requests.post(api_url, json=payload)
-
-                        if response.text == 'true':
-                            ser.write(b'1')
-                            print("Berhasil")
-                            await send_telegram_message(f"Access granted (Exit Gate) for ID: {scanned_code}")
-                        else:
-                            print("Gagal")
-                            await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}")
+                        try:
+                            response = requests.post(api_url, json=payload)
+                            response.raise_for_status()  # Raise an exception for HTTP errors
+                            if response.text == 'true':
+                                ser.write(b'1')
+                                print("Berhasil")
+                                await send_telegram_message(f"Access granted (Exit Gate) for ID: {scanned_code}")
+                            else:
+                                print("Gagal")
+                                await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}")
+                        except requests.exceptions.RequestException as e:
+                            print(f"Failed to send request: {e}")
+                            await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}. Error: {e}")
                         
                         scanned_code = ""  # Reset setelah mengirim data
                         break
