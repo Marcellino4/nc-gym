@@ -37,5 +37,6 @@ def send_telegram_message(message):
 
 if __name__ == "__main__":
     while True:
+        send_telegram_message(f"!!!MAC ADDRESS CHECKER ACTIVE!!!")
         check_connections()
         time.sleep(300)  # Tunggu 5 menit (300 detik) sebelum pengecekan berikutnya
