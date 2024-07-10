@@ -131,7 +131,11 @@ async def vnc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         result = subprocess.run(['vncserver', ':1', '-geometry', '1024x768', '-depth', '24'], check=True, capture_output=True, text=True)
         output = result.stdout
-        await update.message.reply_text(f'VNC server started:\n```\n{output}\n```', parse_mode='MarkdownV2')
+        error_output = result.stderr
+        if error_output:
+            await update.message.reply_text(f'Failed to start VNC server:\n```\n{error_output}\n```', parse_mode='MarkdownV2')
+        else:
+            await update.message.reply_text(f'VNC server started:\n```\n{output}\n```', parse_mode='MarkdownV2')
     except subprocess.CalledProcessError as e:
         logger.error(f"Error running vncserver: {e}")
         await update.message.reply_text(f'Failed to start VNC server: {e}')
