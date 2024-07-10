@@ -20,9 +20,8 @@ def check_connections():
         print(output)  # Untuk debugging, bisa dihapus nanti
         connected_mac_addresses = [line.split()[2] for line in output.split('\n') if 'ACL' in line]
         for mac, description in devices.items():
-            send_telegram_message(f"Device {description} (MAC address {mac}) tidak terhubung!")
-            # if mac not in connected_mac_addresses:
-            #     send_telegram_message(f"Device {description} (MAC address {mac}) tidak terhubung!")
+            if mac not in connected_mac_addresses:
+                send_telegram_message(f"Device {description} (MAC address {mac}) tidak terhubung!")
     except subprocess.CalledProcessError as e:
         print(f"Error saat menjalankan hcitool: {e}")
 
