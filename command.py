@@ -37,10 +37,10 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     help_text = (
         "Available commands:\n"
         "/help - Show this help message\n"
-        "/restart - Restart the Bluetooth service\n"
         "/hcitool - Run a hcitool and show the results\n"
         "/speedtest - Run a speedtest and show the results\n"
         "/evtest - Run a evtest and show the event\n"
+        "/vnc - Run vncserver with specific settings\n"
     )
     await update.message.reply_text(help_text)
 
@@ -122,6 +122,20 @@ async def evtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error(f"Error running evtest: {e}")
         await update.message.reply_text(f'Failed to run evtest: {e}')
 
+async def vnc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.message.chat_id
+    user = update.message.from_user
+    logger.info(f"User {user.first_name} issued /vnc command")
+
+    # Menjalankan perintah sistem
+    try:
+        result = subprocess.run(['vncserver', ':1', '-geometry', '1024x768', '-depth', '24'], check=True, capture_output=True, text=True)
+        output = result.stdout
+        await update.message.reply_text(f'VNC server started:\n```\n{output}\n```', parse_mode='MarkdownV2')
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error running vncserver: {e}")
+        await update.message.reply_text(f'Failed to start VNC server: {e}')
+        
 def main() -> None:
     # Membuat application dan pass the bot's token.
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
@@ -132,6 +146,7 @@ def main() -> None:
     application.add_handler(CommandHandler("hcitool", hcitool))
     application.add_handler(CommandHandler("speedtest", speedtest))
     application.add_handler(CommandHandler("evtest", evtest))
+    application.add_handler(CommandHandler("vnc", vnc))
 
     async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error(msg="Exception while handling an update:", exc_info=context.error)
