@@ -53,7 +53,7 @@ async def main():
                     if event.code in key_codes:
                         scanned_code += key_codes[event.code]
                     elif event.code == ecodes.KEY_ENTER:
-                        await send_telegram_message(f"ID: {scanned_code}")
+                        await send_telegram_message(f"ADIT OHH ADITTTTT : {scanned_code}")
                         print(f"Scanned code: {scanned_code}")
                         scanned_code = ""  # Reset setelah mengirim data
                         break
