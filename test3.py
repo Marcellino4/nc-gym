@@ -4,6 +4,8 @@ import asyncio
 from evdev import InputDevice, categorize, ecodes
 from telegram import Bot
 
+# Inisialisasi port serial
+
 TELEGRAM_BOT_TOKEN = '7243366231:AAGxqP4QhS_cPv1-JHfN5NbFrT1wk7Y-TBk'
 CHAT_ID = '-1002204066531'
 
@@ -20,7 +22,7 @@ async def send_telegram_message(message):
 # Fungsi untuk mendapatkan perangkat input yang sesuai (event2)
 def find_input_device():
     try:
-        dev2 = InputDevice('/dev/input/event5')
+        dev2 = InputDevice('/dev/input/event2')
         return dev2
     except FileNotFoundError:
         raise Exception("No suitable input device found at /dev/input/event2.")
@@ -53,8 +55,22 @@ async def main():
                     if event.code in key_codes:
                         scanned_code += key_codes[event.code]
                     elif event.code == ecodes.KEY_ENTER:
-                        await send_telegram_message(f"ADIT OHH ADITTTTT : {scanned_code}")
                         print(f"Scanned code: {scanned_code}")
+                        api_url = "https://nc-gym.com/api/gate-log"
+                        payload = {'id': scanned_code, 'status': 'masuk'}
+                        try:
+                            response = requests.post(api_url, json=payload)
+                            response.raise_for_status()  # Raise an exception for HTTP errors
+                            if response.text == 'true':
+                                print("Berhasil")
+                                await send_telegram_message(f"Access granted (Entry Gate) for ID: {scanned_code}")
+                            else:
+                                print("Gagal")
+                                await send_telegram_message(f"!!!!!Access denied (Entry Gate) for ID: {scanned_code}")
+                        except requests.exceptions.RequestException as e:
+                            print(f"Failed to send request: {e}")
+                            await send_telegram_message(f"!!!!!Access denied (Entry Gate) for ID: {scanned_code}. Error: {e}")
+                        
                         scanned_code = ""  # Reset setelah mengirim data
                         break
     except KeyboardInterrupt:
