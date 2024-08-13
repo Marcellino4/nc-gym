@@ -87,7 +87,7 @@ async def speedtest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         await update.message.reply_text('SPEEDTEST LAGI JALAN.. MOHON BERSABAR')
 
-        result = subprocess.run(['speedtest', '--simple'], check=True, capture_output=True, text=True)
+        result = subprocess.run(['speedtest-cli', '--simple'], check=True, capture_output=True, text=True)
         output = result.stdout
 
         # Escape karakter khusus untuk MarkdownV2
