@@ -34,7 +34,7 @@ sleep 10
 
 echo "Running Python scripts..."
 send_telegram_message "Running Python scripts..."
-cd /var/www/nc-gym && python tes3t.py
+cd /var/www/nc-gym && python test3.py
 
 # Kirimkan log ke Telegram setelah semua perintah selesai
 send_telegram_message "Startup script completed. Log:\n$(cat $LOGFILE)"
