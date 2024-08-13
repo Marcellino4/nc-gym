@@ -134,15 +134,15 @@ async def vnc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
         output = result.stdout
         error_output = result.stderr
-        
+
         if error_output:
             await update.message.reply_text(f'Failed to start VNC server:\n```\n{error_output}\n```', parse_mode='MarkdownV2')
             logger.error(f"Error output from vncserver: {error_output}")
         else:
             await update.message.reply_text(f'VNC server started:\n```\n{output}\n```', parse_mode='MarkdownV2')
     except subprocess.CalledProcessError as e:
-        logger.error(f"Error running vncserver: {e}")
-        await update.message.reply_text(f'Failed to start VNC server: {e}')
+        logger.error(f"Error running vncserver: {e}\n{e.stderr}")
+        await update.message.reply_text(f'Failed to start VNC server: {e}\n{e.stderr}')
         
 def main() -> None:
     # Membuat application dan pass the bot's token.
