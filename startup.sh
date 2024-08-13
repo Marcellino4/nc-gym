@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# Zerotier
+gnome-terminal -- bash -c "sudo zerotier-cli join 56374ac9a46a7313"
 # Start VNC server
 gnome-terminal -- bash -c "vncserver :1 -geometry 1024x768 -depth 24; exec bash"
 sleep 30
