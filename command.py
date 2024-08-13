@@ -40,7 +40,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "/hcitool - Run a hcitool and show the results\n"
         "/speedtest - Run a speedtest and show the results\n"
         "/evtest - Run a evtest and show the event\n"
-        "/vnc - Run vncserver with specific settings\n"
+        "/vnc - Run vncserver\n"
+        "/stop_vnc - Stop vncserver\n"
     )
     await update.message.reply_text(help_text)
 
@@ -139,7 +140,25 @@ async def vnc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     except subprocess.CalledProcessError as e:
         logger.error(f"Error running vncserver: {e}\n{e.stderr}")
         await update.message.reply_text(f'Failed to start VNC server: {e}\n{e.stderr}')
+   
+async def stop_vnc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.message.chat_id
+    user = update.message.from_user
+    logger.info(f"User {user.first_name} issued /vnc command")
+
+    try:
+        # Menjalankan perintah sistem untuk memulai VNC server
+        command = 'vncserver -kill :1'
+        result = subprocess.run(['bash', '-c', command], check=True, capture_output=True, text=True)
         
+        output = result.stdout
+        error_output = result.stderr
+
+        await update.message.reply_text(f'VNC server stopped:\n```\n{output}\n```', parse_mode='MarkdownV2')
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error running vncserver: {e}\n{e.stderr}")
+        await update.message.reply_text(f'Failed to stop VNC server: {e}\n{e.stderr}')
+
 def main() -> None:
     # Membuat application dan pass the bot's token.
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
@@ -151,6 +170,7 @@ def main() -> None:
     application.add_handler(CommandHandler("speedtest", speedtest))
     application.add_handler(CommandHandler("evtest", evtest))
     application.add_handler(CommandHandler("vnc", vnc))
+    application.add_handler(CommandHandler("stop_vnc", stop_vnc))
 
     async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error(msg="Exception while handling an update:", exc_info=context.error)
