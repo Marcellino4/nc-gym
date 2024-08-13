@@ -1,49 +1,24 @@
 #!/bin/bash
-# Zerotier
-gnome-terminal -- bash -c "sudo zerotier-cli join 56374ac9a46a7313"
-# Start VNC server
-gnome-terminal -- bash -c "vncserver :1 -geometry 1024x768 -depth 24; exec bash"
-sleep 30
 
-# Connect to the first Bluetooth device
-gnome-terminal -- bash -c "
-bluetoothctl << EOF
-connect DC:0D:30:93:BF:11
-EOF
+# Jalankan bluetoothctl di terminal baru
+gnome-terminal -- bash -c "bluetoothctl && connect DC:0D:30:93:BF:11; exec bash"
 
-# Loop until the device is connected
-until bluetoothctl info DC:0D:30:93:BF:11 | grep -q 'Connected: yes'; do
-    sleep 5
-    bluetoothctl connect DC:0D:30:93:BF:11
-done
-exec bash"
-sleep 30
+# Tunggu beberapa detik agar bluetoothctl selesai
+sleep 10
 
-# Connect to the second Bluetooth device
-gnome-terminal -- bash -c "
-bluetoothctl << EOF
-connect DC:0D:30:93:BF:8C
-EOF
-
-# Loop until the device is connected
-until bluetoothctl info DC:0D:30:93:BF:8C | grep -q 'Connected: yes'; do
-    sleep 5
-    bluetoothctl connect DC:0D:30:93:BF:8C
-done
-exec bash"
-sleep 30
-
-# Connect rfcomm0
+# Jalankan rfcomm connect di terminal baru
 gnome-terminal -- bash -c "sudo rfcomm connect rfcomm0 98:D3:31:FB:5E:5C; exec bash"
-sleep 30
 
-# Connect rfcomm1
+sleep 10
+
 gnome-terminal -- bash -c "sudo rfcomm connect rfcomm1 98:D3:31:FB:5F:57; exec bash"
-sleep 30
 
-# Run the first Python script
+# Tunggu beberapa detik agar rfcomm selesai
+sleep 10
+
+# Jalankan skrip Python di terminal baru
 gnome-terminal -- bash -c "cd /var/www/nc-gym && python test.py; exec bash"
-sleep 30
 
-# Run the second Python script
+sleep 10
+
 gnome-terminal -- bash -c "cd /var/www/nc-gym && python test2.py; exec bash"
