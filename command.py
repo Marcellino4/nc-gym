@@ -136,7 +136,7 @@ async def vnc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         output = result.stdout
         error_output = result.stderr
 
-        await update.message.reply_text(f'VNC server started:\n```\n{output}\n```', parse_mode='MarkdownV2')
+        await update.message.reply_text(f'VNC server started', parse_mode='MarkdownV2')
     except subprocess.CalledProcessError as e:
         logger.error(f"Error running vncserver: {e}\n{e.stderr}")
         await update.message.reply_text(f'Failed to start VNC server: {e}\n{e.stderr}')
@@ -154,7 +154,7 @@ async def stop_vnc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         output = result.stdout
         error_output = result.stderr
 
-        await update.message.reply_text(f'VNC server stopped:\n```\n{output}\n```', parse_mode='MarkdownV2')
+        await update.message.reply_text(f'VNC server stopped', parse_mode='MarkdownV2')
     except subprocess.CalledProcessError as e:
         logger.error(f"Error running vncserver: {e}\n{e.stderr}")
         await update.message.reply_text(f'Failed to stop VNC server: {e}\n{e.stderr}')
