@@ -127,11 +127,15 @@ async def vnc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.message.from_user
     logger.info(f"User {user.first_name} issued /vnc command")
 
-    # Menjalankan perintah sistem
+    # Menjalankan perintah sistem di dalam environment tertentu
     try:
-        result = subprocess.run(['vncserver', ':1', '-geometry', '1024x768', '-depth', '24'], check=True, capture_output=True, text=True)
+        # Menggunakan 'bash -c' untuk menjalankan perintah dalam environment yang tepat
+        command = 'source /env/bin/activate && vncserver :1 -geometry 1024x768 -depth 24'
+        result = subprocess.run(['bash', '-c', command], check=True, capture_output=True, text=True)
+        
         output = result.stdout
         error_output = result.stderr
+        
         if error_output:
             await update.message.reply_text(f'Failed to start VNC server:\n```\n{error_output}\n```', parse_mode='MarkdownV2')
         else:
