@@ -16,26 +16,25 @@ send_telegram_message() {
 
 # echo "Starting Bluetooth connection..."
 # send_telegram_message "Starting Bluetooth connection..."
-# lxterminal -e "bluetoothctl && connect DC:0D:30:93:BF:11; exec bash"
+# bluetoothctl connect DC:0D:30:93:BF:11
 
 # # Tunggu beberapa detik agar bluetoothctl selesai
 # sleep 10
 
 # echo "Connecting rfcomm0..."
 # send_telegram_message "Connecting rfcomm0..."
-# lxterminal -e "sudo rfcomm connect rfcomm0 98:D3:31:FB:5E:5C; exec bash"
+# sudo rfcomm connect rfcomm0 98:D3:31:FB:5E:5C
 
 # echo "Connecting rfcomm1..."
 # send_telegram_message "Connecting rfcomm1..."
-# lxterminal -e "sudo rfcomm connect rfcomm1 98:D3:31:FB:5F:57; exec bash"
+# sudo rfcomm connect rfcomm1 98:D3:31:FB:5F:57
 
-# # Tunggu beberapa detik agar rfcomm selesai
-# sleep 10
+# Tunggu beberapa detik agar rfcomm selesai
+sleep 10
 
 echo "Running Python scripts..."
 send_telegram_message "Running Python scripts..."
-lxterminal -e "cd /var/www/nc-gym && python test3.py; exec bash"
-# lxterminal -e "cd /var/www/nc-gym && python test2.py; exec bash"
+cd /var/www/nc-gym && python tes3t.py
 
 # Kirimkan log ke Telegram setelah semua perintah selesai
 send_telegram_message "Startup script completed. Log:\n$(cat $LOGFILE)"
