@@ -9,3 +9,9 @@ sudo rfcomm connect rfcomm1 98:D3:31:FB:5F:57 -> masuk
 cd /var/www/nc-gym
 test.py -> masuk
 test.py -> keluar
+
+
+----TERBARU----
+vncserver :1 -geometry 1024x768 -depth 24
+sudo rfcomm connect rfcomm1 98:D3:31:FB:5F:57
+cd /var/www/nc-gym && python test.py
