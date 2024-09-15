@@ -63,6 +63,7 @@ async def main():
                         try:
                             response = requests.post(api_url, json=payload)
                             response.raise_for_status()  # Raise an exception for HTTP errors
+                            print(f"Response API : {response.text}")
                             if response.text == 'true':
                                 ser.write(b'1')
                                 print("Berhasil")
