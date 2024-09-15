@@ -61,8 +61,12 @@ async def main():
                         api_url = "https://nc-gym.com/api/gate-log"
                         payload = {'id': scanned_code, 'status': 'keluar'}
                         try:
-                            response = requests.post(api_url, json=payload)
+                            headers = {
+                                'Content-Type': 'application/json'
+                            }
+                            response = requests.post(api_url, json=payload, headers=headers, verify=False)
                             response.raise_for_status()  # Raise an exception for HTTP errors
+                            print(f"Status Code: {response.status_code}")
                             print(f"Response API : {response.text}")
                             if response.text == 'true':
                                 ser.write(b'1')
