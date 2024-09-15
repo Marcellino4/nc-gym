@@ -76,9 +76,19 @@ async def main():
                             else:
                                 print("Gagal")
                                 await send_telegram_message(f"!!!!!Access denied (Entry Gate) for ID: {scanned_code}")
-                        except requests.exceptions.RequestException as e:
-                            print(f"Failed to send request: {e}")
-                            await send_telegram_message(f"!!!!!Access denied (Entry Gate) for ID: {scanned_code}. Error: {e}")
+                        except requests.exceptions.HTTPError as http_err:
+                            print(f"HTTP error occurred: {http_err}")
+                            await send_telegram_message(f"!!!!!Access denied (Entry Gate) for ID: {scanned_code}. HTTP Error: {http_err}")
+                        except requests.exceptions.ConnectionError as conn_err:
+                            print(f"Connection error occurred: {conn_err}")
+                            await send_telegram_message(f"!!!!!Access denied (Entry Gate) for ID: {scanned_code}. Connection Error: {conn_err}")
+                        except requests.exceptions.Timeout as timeout_err:
+                            print(f"Timeout error occurred: {timeout_err}")
+                            await send_telegram_message(f"!!!!!Access denied (Entry Gate) for ID: {scanned_code}. Timeout Error: {timeout_err}")
+                        except requests.exceptions.RequestException as req_err:
+                            print(f"Failed to send request: {req_err}")
+                            await send_telegram_message(f"!!!!!Access denied (Entry Gate) for ID: {scanned_code}. Error: {req_err}")
+
                         
                         scanned_code = ""  # Reset setelah mengirim data
                         break
