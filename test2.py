@@ -3,6 +3,8 @@ import requests
 import asyncio
 from evdev import InputDevice, categorize, ecodes
 from telegram import Bot
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Inisialisasi port serial
 serial_port = '/dev/rfcomm0'
@@ -58,14 +60,14 @@ async def main():
                         scanned_code += key_codes[event.code]
                     elif event.code == ecodes.KEY_ENTER:
                         print(f"Scanned code: {scanned_code}")
-                        api_url = "https://www.nc-gym.com.nisgroup.id/api/gate-log"
+                        api_url = "https://www.nc-gym.com/api/gate-log"
                         payload = {'id': scanned_code, 'status': 'keluar'}
                         try:
                             headers = {
                                 'Content-Type': 'application/json',
                                 'User-Agent': 'Mozilla/5.0'
                             }
-                            response = requests.post(api_url, json=payload, headers=headers, verify=False)
+                            response = requests.post(api_url, json=payload, headers=headers)
                             response.raise_for_status()  # Raise an exception for HTTP errors
                             print(f"Status Code: {response.status_code}")
                             print(f"Response API : {response.text}")
