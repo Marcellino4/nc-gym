@@ -1,23 +1,13 @@
-import cloudscraper
+import requests
+import time
 
-# URL API dan data payload
-api_url = "https://www.nc-gym.com/api/gate-log"
-payload = {'id': '786195', 'status': 'keluar'}
+url = "https://nc-gym.com"
+response = requests.get(url)
 
-# Headers yang dibutuhkan
-headers = {
-    'Content-Type': 'application/json',
-    'User-Agent': 'Mozilla/5.0'
-}
+if "Please wait while your request is being verified" in response.text:
+    print("Waiting for Cloudflare verification...")
+    time.sleep(10)  # Tunggu 10 detik lalu coba lagi
+    response = requests.get(url)
 
-# Inisialisasi cloudscraper untuk melewati Cloudflare
-scraper = cloudscraper.create_scraper()
-
-# Kirim permintaan POST ke API
-try:
-    response = scraper.post(api_url, json=payload, headers=headers, timeout=10)
-    response.raise_for_status()  # Periksa apakah ada error HTTP
-    print(f"Status Code: {response.status_code}")
-    print(f"Response API: {response.text}")
-except Exception as e:
-    print(f"Error occurred: {e}")
+print(f"Status Code: {response.status_code}")
+print(f"Response API: {response.text}")
