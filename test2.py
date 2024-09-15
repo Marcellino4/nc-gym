@@ -62,7 +62,8 @@ async def main():
                         payload = {'id': scanned_code, 'status': 'keluar'}
                         try:
                             headers = {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'User-Agent': 'Mozilla/5.0'
                             }
                             response = requests.post(api_url, json=payload, headers=headers, verify=False)
                             response.raise_for_status()  # Raise an exception for HTTP errors
