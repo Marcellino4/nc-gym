@@ -1,26 +1,23 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
+import cloudscraper
 
-# Konfigurasi untuk headless browser
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
+# URL API dan data payload
+api_url = "https://www.nc-gym.com/api/gate-log"
+payload = {'id': '786195', 'status': 'keluar'}
 
-# Inisialisasi WebDriver dengan Chrome
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+# Headers yang dibutuhkan
+headers = {
+    'Content-Type': 'application/json',
+    'User-Agent': 'Mozilla/5.0'
+}
 
-# Akses API atau halaman yang dilindungi Cloudflare
-api_url = "https://www.nc-gym.com"
-driver.get(api_url)
+# Inisialisasi cloudscraper untuk melewati Cloudflare
+scraper = cloudscraper.create_scraper()
 
-# Dapatkan konten halaman setelah verifikasi Cloudflare
-page_content = driver.page_source
-
-# Cetak atau simpan respons API
-print(page_content)
-
-# Tutup browser setelah selesai
-driver.quit()
+# Kirim permintaan POST ke API
+try:
+    response = scraper.post(api_url, json=payload, headers=headers, timeout=10)
+    response.raise_for_status()  # Periksa apakah ada error HTTP
+    print(f"Status Code: {response.status_code}")
+    print(f"Response API: {response.text}")
+except Exception as e:
+    print(f"Error occurred: {e}")
