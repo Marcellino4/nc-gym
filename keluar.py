@@ -58,45 +58,49 @@ async def main():
     scanned_code = ""
     try:
         while True:
-            for event in dev.read_loop():
-                if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
-                    if event.code in key_codes:
-                        scanned_code += key_codes[event.code]
-                    elif event.code == ecodes.KEY_ENTER:
-                        print(f"Scanned code: {scanned_code}")
-                        api_url = "https://www.nc-gym.com/api/gate-log"
-                        payload = {'id': scanned_code, 'status': 'keluar'}
-                        try:
-                            headers = {
-                                'Content-Type': 'application/json',
-                                'User-Agent': 'Mozilla/5.0'
-                            }
-                            response = requests.post(api_url, json=payload, headers=headers)
-                            response.raise_for_status()  # Raise an exception for HTTP errors
-                            print(f"Status Code: {response.status_code}")
-                            print(f"Response API : {response.text}")
-                            if response.text == 'true':
-                                ser.write(b'1')
-                                print("Berhasil")
-                                await send_telegram_message(f"Access granted (Exit Gate) for ID: {scanned_code}")
-                            else:
-                                print("Gagal")
-                                await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}")
-                        except requests.exceptions.HTTPError as http_err:
-                            print(f"HTTP error occurred: {http_err}")
-                            await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}. HTTP Error: {http_err}")
-                        except requests.exceptions.ConnectionError as conn_err:
-                            print(f"Connection error occurred: {conn_err}")
-                            await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}. Connection Error: {conn_err}")
-                        except requests.exceptions.Timeout as timeout_err:
-                            print(f"Timeout error occurred: {timeout_err}")
-                            await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}. Timeout Error: {timeout_err}")
-                        except requests.exceptions.RequestException as req_err:
-                            print(f"Failed to send request: {req_err}")
-                            await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}. Error: {req_err}")
-                        
-                        scanned_code = ""  # Reset setelah mengirim data
-                        break
+            try:
+                for event in dev.read_loop():
+                    if event.type == ecodes.EV_KEY and event.value == 1:  # Hanya saat tombol ditekan
+                        if event.code in key_codes:
+                            scanned_code += key_codes[event.code]
+                        elif event.code == ecodes.KEY_ENTER:
+                            print(f"Scanned code: {scanned_code}")
+                            api_url = "https://www.nc-gym.com/api/gate-log"
+                            payload = {'id': scanned_code, 'status': 'keluar'}
+                            try:
+                                headers = {
+                                    'Content-Type': 'application/json',
+                                    'User-Agent': 'Mozilla/5.0'
+                                }
+                                response = requests.post(api_url, json=payload, headers=headers)
+                                response.raise_for_status()  # Raise an exception for HTTP errors
+                                print(f"Status Code: {response.status_code}")
+                                print(f"Response API : {response.text}")
+                                if response.text == 'true':
+                                    ser.write(b'1')
+                                    print("Berhasil")
+                                    await send_telegram_message(f"Access granted (Exit Gate) for ID: {scanned_code}")
+                                else:
+                                    print("Gagal")
+                                    await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}")
+                            except requests.exceptions.HTTPError as http_err:
+                                print(f"HTTP error occurred: {http_err}")
+                                await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}. HTTP Error: {http_err}")
+                            except requests.exceptions.ConnectionError as conn_err:
+                                print(f"Connection error occurred: {conn_err}")
+                                await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}. Connection Error: {conn_err}")
+                            except requests.exceptions.Timeout as timeout_err:
+                                print(f"Timeout error occurred: {timeout_err}")
+                                await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}. Timeout Error: {timeout_err}")
+                            except requests.exceptions.RequestException as req_err:
+                                print(f"Failed to send request: {req_err}")
+                                await send_telegram_message(f"!!!!!Access denied (Exit Gate) for ID: {scanned_code}. Error: {req_err}")
+                            
+                            scanned_code = ""  # Reset setelah mengirim data
+                            break
+            except OSError as e:
+                print(f"Device error: {e}. Reinitializing device...")
+                dev = find_input_device()
     except KeyboardInterrupt:
         print("Program interrupted. Exiting...")
     finally:
