@@ -1,3 +1,4 @@
+import time
 import serial
 import requests
 import asyncio
@@ -27,7 +28,8 @@ def find_input_device():
         dev2 = InputDevice('/dev/input/event0')
         return dev2
     except FileNotFoundError:
-        raise Exception("No suitable input device found at /dev/input/event0.")
+        print("No suitable input device found at /dev/input/event0. Retrying in 1 minutes...")
+        time.sleep(60)
 
 # Inisialisasi perangkat input
 dev = find_input_device()
