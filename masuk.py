@@ -24,12 +24,14 @@ async def send_telegram_message(message):
 
 # Fungsi untuk mendapatkan perangkat input yang sesuai (event2)
 def find_input_device():
-    try:
-        dev2 = InputDevice('/dev/input/event0')
-        return dev2
-    except FileNotFoundError:
-        print("No suitable input device found at /dev/input/event0. Retrying in 1 minutes...")
-        time.sleep(60)
+    while True:
+        try:
+            dev2 = InputDevice('/dev/input/event0')
+            print("Input device /dev/input/event0 found.")
+            return dev2
+        except FileNotFoundError:
+            print("No suitable input device found at /dev/input/event0. Retrying in 1 minutes...")
+            time.sleep(60)
 
 # Inisialisasi perangkat input
 dev = find_input_device()
