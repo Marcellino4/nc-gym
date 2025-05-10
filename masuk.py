@@ -7,7 +7,7 @@ from telegram import Bot
 
 # Inisialisasi port serial
 serial_port = '/dev/rfcomm1'
-ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
+# ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
 
 TELEGRAM_BOT_TOKEN = '7243366231:AAGxqP4QhS_cPv1-JHfN5NbFrT1wk7Y-TBk'
 CHAT_ID = '-1002204066531'
@@ -21,6 +21,19 @@ async def send_telegram_message(message):
         await bot.send_message(chat_id=CHAT_ID, text=message)
     except Exception as e:
         print(f"Failed to send message: {e}")
+
+def connect_serial():
+    while True:
+        try:
+            ser = serial.Serial(serial_port, baudrate=9600, timeout=1)
+            print(f"Terhubung ke {serial_port}")
+            return ser
+        except (serial.SerialException, FileNotFoundError) as e:
+            print(f"Gagal terhubung: {e}. Mencoba lagi dalam 5 detik...")
+            time.sleep(5)
+
+# Inisialisasi port serial dengan retry
+ser = connect_serial()
 
 # Fungsi untuk mendapatkan perangkat input yang sesuai (event2)
 def find_input_device():
