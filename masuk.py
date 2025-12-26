@@ -75,7 +75,7 @@ async def main():
                         scanned_code += key_codes[event.code]
                     elif event.code == ecodes.KEY_ENTER:
                         print(f"Scanned code: {scanned_code}")
-                        api_url = "https://www.nc-gym.com/api/gate-log"
+                        api_url = "https://nc-gym.com/api/gate-log"
                         payload = {'id': scanned_code, 'status': 'masuk'}
                         try:
                             headers = {
